@@ -1,6 +1,6 @@
 const Room = require('../models/Room');
 
-// GET: Retrieve room schedule for a specific date
+// GET
 exports.getRoomSchedule = async (req, res) => {
   const { room_id, date } = req.params;
 
@@ -28,7 +28,7 @@ exports.getRoomSchedule = async (req, res) => {
   }
 };
 
-// PUT: Update room schedule (e.g., after booking)
+// PUT
 exports.updateRoomSchedule = async (req, res) => {
   const { room_id, date } = req.params;
   const { hours } = req.body;
@@ -54,7 +54,7 @@ exports.updateRoomSchedule = async (req, res) => {
   }
 };
 
-// GET: All rooms (for search/list)
+// GET
 exports.getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
