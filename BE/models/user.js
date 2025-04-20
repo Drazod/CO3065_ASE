@@ -8,7 +8,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['student', 'lecturer', 'staff', 'guest'],
     required: true
-  }
+  },
+  bookings: [
+    {
+      room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room' },
+      date: String,
+      hour: Number
+    }
+  ]
 });
 
 module.exports = mongoose.model('User', userSchema);
