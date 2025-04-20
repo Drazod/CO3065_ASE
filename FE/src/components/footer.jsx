@@ -34,17 +34,17 @@ const Footer = () => {
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <footer className="bg-[#BFAF92] py-8 min-w-screen z-50 flex">
+    <footer className="bg-[#132565] py-8 min-w-screen z-50 flex">
       <div className="container mx-auto px-4">
         {/* Footer Content */}
         <div className="flex justify-between">
           {/* Logo Section */}
           <div>
             <h2 className="text-3xl font-dancing font-semibold">
-              Moda
+              ROMS
             </h2>
             <p className="mt-2 text-gray-700">
-              Get your precious time with <br /> favorite cake
+              Fast room booking system 
             </p>
             <div className="flex flex-row space-x-4">
               <a
@@ -87,7 +87,7 @@ const Footer = () => {
 
 
             <p className="mt-6 text-gray-500 text-sm">
-              Copyright 2023 YUMEOW, Inc. Terms & Privacy
+              Copyright 2023 HCMUT, Inc. Terms & Privacy
               <p>Phone number: {contact.phone_number}</p>
             </p>
 

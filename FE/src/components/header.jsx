@@ -17,11 +17,11 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 w-full bg-[#BFAF92] grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} items-center text-[22px] px-6 py-6 border-b border-[#434237] z-20 font-Jsans`}>
+    <header className={`fixed top-0 left-0 w-full text-white bg-[#132565] grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} items-center text-[22px] px-6 py-6 border-b border-[#434237] z-20 font-Jsans`}>
       <div className="flex items-center space-x-6">
         <a href="/store">
           <button className=" text-white rounded-full py-2 px-4 bg-[#434237] hover:bg-gray-400 transition-colors duration-300 z-20">
-            shop now
+            home
           </button>
         </a>
       </div>
@@ -29,8 +29,8 @@ export default function Header() {
       {!isMobile && (
         <div className="flex justify-center">
           <a href="/home">
-            <h1 className="text-[40px] font-dancing font-semibold mr-6">
-              Moda
+            <h1 className="text-[33px] font-dancing font-semibold mr-6">
+              HRB
             </h1>
           </a>
         </div>
@@ -38,10 +38,10 @@ export default function Header() {
 
       <div className="flex items-center font-light justify-end space-x-6 relative">
         <a href="/home#contact" className="hover:text-gray-600">
-          our story
+          about
         </a>
         <a href="/home#contact" className="hover:text-gray-600">
-          contact us
+          contact 
         </a>
         
         {/* <a href={memberData ? "/profile" : "/login"} className="flex items-center space-x-2"> */}
@@ -52,7 +52,7 @@ export default function Header() {
 
         {/* <FaShoppingCart onClick={() => setShowCart(true)} className="text-xl hover:text-gray-600" />
         <CartModal showCart={showCart} setShowCart={setShowCart} /> */}
-        <FaShoppingCart className="text-xl hover:text-gray-600" />
+        {/* <FaShoppingCart className="text-xl hover:text-gray-600" /> */}
       </div>
 
       {isMobile && (
