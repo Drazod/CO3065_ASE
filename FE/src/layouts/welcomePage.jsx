@@ -55,7 +55,7 @@ const Welcome = () => {
       </div>
 
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
