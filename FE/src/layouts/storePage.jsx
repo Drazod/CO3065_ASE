@@ -11,15 +11,24 @@ import smallright from "../assets/store/smallright.png";
 import down from "../assets/store/down.png";
 import alt from "../assets/store/alt.png";
 import DatePicker from "react-datepicker";
+import RoomPopup from "../components/bookPage/roomdetailPopUp";
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 const FashionTemplate = () => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showPopup, setShowPopup] = useState(false);
+
+
+  const getMonthName = (date) => {
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    return months[date.getMonth()];
+  };
 
   return (
+    
     <div className="relative-container noise-overlay min-h-screen flex flex-col">
       <Header />
-
+      <RoomPopup show={showPopup} onClose={() => setShowPopup(false)} />
       <section className="relative pt-52 h-full flex flex-col items-center justify-center">
         {/* Hero Title */}
         <div className="text-center mb-10">
@@ -64,7 +73,7 @@ const FashionTemplate = () => {
           </div>
         </div>
 
-        <div className="mt-20 grid grid-cols-3 gap-4 pb-8 px-12">
+        <div className=" grid grid-cols-3 gap-4 pb-8 px-12">
           {/* Quote Section */}
           <blockquote className="font-Jsans font-medium text-[#434237] text-2xl leading-[50px]">
             <p className="text-[128px] font-jokey">“</p>
@@ -81,11 +90,26 @@ const FashionTemplate = () => {
               </div>
             </button>
           </div>
-          {/* Pagination */}
-          <div className="flex space-x-4 mt-auto ml-auto mr-8 z-10 items-center">
-            <button className="border-2 h-12 w-12 flex justify-center items-center align-middle rounded-full text-white hover:bg-gray-400">{"<"}</button>
-            <button className="h-12 w-12 flex justify-center items-center align-middle rounded-full bg-[#111655] text-white hover:bg-gray-400">{">"}</button>
-            <span className="text-[#434237] font-kaisei text-5xl">01 <span className="text-base">/ 05</span></span>
+          {/* Date */}
+          <div className="relative w-fit ml-auto mr-8 mt-14 z-10">
+            <div className="absolute left-3 -top-3 flex space-x-8 z-20">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-3 h-5 border-[2px] border-blue-900 rounded-full bg-black"
+                  style={{ transform: 'rotate(-20deg)' }}
+                ></div>
+              ))}
+            </div>
+            <div className="flex items-center justify-end z-10 space-x-px">
+                <div className="flex flex-col items-center justify-center w-20 h-28 bg-white border border-blue-900 rounded-md shadow-md">
+                  <span className="text-xs tracking-widest font-bold">{getMonthName(selectedDate)}</span>
+                  <span className="text-3xl font-black text-black">{selectedDate.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                </div>
+                <div className="flex items-center justify-center w-28 h-28 bg-white border border-black rounded-md shadow-md">
+                  <span className="text-4xl font-black text-black">{selectedDate.getDate()}</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -124,7 +148,7 @@ const FashionTemplate = () => {
               </div>
             </div>
 
-            <button className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 mt-4 md:mt-6">
+            <button  onClick={() => setShowPopup(true)} className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 mt-4 md:mt-6">
               BOOK NOW
             </button>
           </div>
