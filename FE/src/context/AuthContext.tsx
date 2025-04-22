@@ -1,38 +1,82 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import { IUser } from '../constants/IUser';
+import axiosInstance from '../configs/axiosInstance';
+import { AxiosError } from 'axios';
+
+const AUTH_TOKEN_KEY = 'auth_token';
 
 interface AuthContextType {
   user: IUser | null;
-  login: (userData: IUser) => void;
+  token: string | null;
+  login: (userData: IUser, token: string) => void;
   logout: () => void;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem(AUTH_TOKEN_KEY));
   const [loading, setLoading] = useState(true);
 
-  const login = (userData: IUser | null) => {
+  useEffect(() => {
+    const verifyToken = async () => {
+      const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (storedToken) {
+        try {
+          console.log('Verifying token...');
+          const response = await axiosInstance.get<{ user: IUser }>('/auth/me');
+          if (response.data && response.data.user) {
+            console.log('Token verified, user data received.');
+            setUser(response.data.user);
+            setToken(storedToken);
+          } else {
+            console.warn("Token verification response missing user data.");
+            logout();
+          }
+        } catch (error) {
+          const axiosError = error as AxiosError;
+          console.error("Token verification failed:", axiosError.response?.status, axiosError.message);
+          if (axiosError.response?.status !== 401) {
+            logout();
+          }
+        }
+        finally {
+          setLoading(false);
+        }
+      } else {
+        console.log("No stored token found.");
+        setLoading(false);
+      }
+    };
+
+    verifyToken();
+  }, []);
+
+  const login = (userData: IUser | null, token: string) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    setToken(token);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    console.log("AuthContext: User logged in, state updated.");
   };
 
   const logout = () => {
+    console.log("AuthContext: Logging out.");
     setUser(null);
-    localStorage.removeItem('user');
+    setToken(null);
+    localStorage.removeItem(AUTH_TOKEN_KEY);
   };
 
-  React.useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
-
-  const value = { user, login, logout, loading };
+  const value = useMemo(() => ({
+    user,
+    token,
+    login,
+    logout,
+    loading,
+    isAuthenticated: !!user && !!token && !loading
+  }), [user, token, loading]);
 
   return (
     <AuthContext.Provider value={value}>

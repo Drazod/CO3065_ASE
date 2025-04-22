@@ -1,14 +1,39 @@
 import { Formik, Form, Field } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../configs/axiosInstance';
 import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
 export default function LogInPage() {
-  const { login } = useAuth()
-  const navigate = useNavigate();
+  const [submitError, setSubmitError] = useState(null);
+  const { login, user } = useAuth();
 
-  const onSubmit = (values) => {
-    login(values);
-    navigate("/store");
+  if (user) {
+    return <Navigate to="/store" />;
+  }
+
+  const onSubmit = async (values) => {
+    try {
+      console.log("Formik onSubmit: Calling API /auth/signin");
+      console.log('Formik data:', values.username, values.password);
+      const response = await axiosInstance.post('/auth/signin', {
+        username: values.username,
+        password: values.password,
+      });
+      console.log("API Response:", response.data);
+
+      if (response.data && response.data.user && response.data.token) {
+        login(response.data.user, response.data.token);
+        console.log("Formik onSubmit: Login successful, context updated.");
+      } else {
+        throw new Error('Login response missing user data or token.');
+      }
+    } catch (error) {
+      console.error("Formik onSubmit: Login API call failed:", error);
+      const axiosError = error;
+      const message = axiosError.response?.data?.message || axiosError.message || 'Login failed. Please check your credentials.';
+      setSubmitError(message);
+    }
   };
 
   const fieldCSS = "bg-white border rounded-md px-4 py-3";
@@ -18,34 +43,35 @@ export default function LogInPage() {
     <div className='bg-blue-100 flex h-screen justify-center items-center px-8'>
       <div className='w-full md:w-[30rem] bg-white px-10 py-7 rounded-xl flex flex-col gap-10'>
         <div className='flex flex-col gap-4'>
-          <img src='/assets/hcmut-logo.svg' className='h-28'/>
+          <img src='/assets/hcmut-logo.svg' className='h-28' />
           <div className='flex flex-col gap-1 items-center'>
             <h1 className='font-bold text-3xl'>Sign in</h1>
             <p>to continue to SCAMS</p>
           </div>
         </div>
         <Formik
-          initialValues={{ email: "johndoe@hcmut.edu.vn", password: "123456" }}
+          initialValues={{ username: "", password: "" }}
           validate={values => {
             const errors = {};
-            if (!values.email) { errors.email = "Required." }
-            else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) { errors.email = "Invalid email address." }
+            if (!values.username) { errors.username = "Required." }
+            // else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) { errors.email = "Invalid email address." }
             return errors;
           }}
           onSubmit={(values) => onSubmit(values)}
         >
           {({ isSubmitting }) => (
             <Form className='flex flex-col gap-4'>
+              {submitError && <div style={{ color: 'red', marginBottom: '1rem' }}>{submitError}</div>}
               <div className='flex flex-col gap-1'>
-                <label htmlFor="email">Email</label>
-                <Field className={fieldCSS} name="email" placeholder="Enter your email" />
+                <label htmlFor="username">Username</label>
+                <Field className={fieldCSS} name="username" placeholder="Enter your username" />
               </div>
               <div className='flex flex-col gap-1'>
                 <label htmlFor="password">Password</label>
                 <Field className={fieldCSS} name="password" type="password" placeholder="Enter your password" />
               </div>
-              <button className={buttonCSS} type="submit" disabled={isSubmitting}>
-                Sign In
+              <button className={buttonCSS} type="submit">
+                {isSubmitting ? 'Signing in...' : 'Sign In'}
               </button>
             </Form>
           )}
