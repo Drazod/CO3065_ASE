@@ -14,7 +14,7 @@ import DatePicker from "react-datepicker";
 import RoomPopup from "../components/bookPage/roomdetailPopUp";
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
-const FashionTemplate = () => {
+const Booking= () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
 
@@ -157,20 +157,69 @@ const FashionTemplate = () => {
 
       {/* Room Booking List Section */}
       <section className="py-16 px-8 bg-gray-100 text-gray-800">
-        <h2 className="text-3xl font-semibold mb-12 text-center">Available Room Bookings</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((room) => (
-            <div key={room} className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-2">Room {room}</h3>
-              <p className="mb-2">Location: Building A</p>
-              <p className="mb-4">Availability: <span className="text-green-600 font-semibold">Available</span></p>
-              <button className="mt-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Book Now
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-3xl font-semibold">Result</h2>
+            <p className="text-sm text-blue-500">
+              Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
+            </p>
+          </div>
+          <div class="flex overflow-hidden border-x rounded-bl-[80px] rounded-br-[80px] bg-gradient-to-r from-white via-[#667085] to-white py-[1px] pt-[1px] pb-1">
+            <button className="bg-[#6c7389] text-white text-sm font-semibold px-10 py-4 rounded-bl-[80px]">
+                Short-term
               </button>
+              <button className="bg-white text-sm font-semibold text-gray-800 px-10 py-4 " >
+                Long-term
+              </button>
+              <button className="bg-white text-sm font-semibold text-gray-800 px-10 py-4" >
+                Foreigner
+              </button>
+          </div>
+        </div>
+
+        <div className="grid gap-6 max-w-4xl mx-auto">
+          {[1, 2, 3].map((_, i) => (
+            <div key={i} className="flex items-center bg-white rounded-xl shadow-md overflow-hidden">
+              {/* Left form section */}
+              <div className="flex-grow px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="From"
+                    className="bg-gray-100 rounded px-4 py-2 text-sm outline-none"
+                  />
+                  <img src="/assets/bus-icon.png" alt="icon" className="w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="To"
+                    className="bg-gray-100 rounded px-4 py-2 text-sm outline-none"
+                  />
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-400">01/01/2000</span>
+                  <div className="w-5 h-5 bg-gray-800 rounded-full"></div>
+                </div>
+              </div>
+
+              {/* Buy button */}
+              <div className="w-32 bg-[#6c7389] text-white text-center flex items-center justify-center text-xl font-bold py-10 rounded-l-xl">
+                BUY
+              </div>
             </div>
           ))}
         </div>
+
+        <div className="flex justify-center mt-6">
+          <div className="flex space-x-1">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-2 h-2 bg-gray-300 rounded-full"></div>
+            ))}
+          </div>
+        </div>
       </section>
+
+
+
 
       {/* Recently Viewed Section */}
       {/* <section className="py-16 px-8 h-full text-center ">
@@ -225,4 +274,4 @@ const FashionTemplate = () => {
   );
 };
 
-export default FashionTemplate;
+export default Booking;
