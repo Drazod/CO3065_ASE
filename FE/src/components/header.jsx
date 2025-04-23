@@ -6,10 +6,8 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   // const [showCart, setShowCart] = useState(false);
-  console.log("Welcome Page");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { user, logout } = useAuth();
-  console.log(user);
 
   useEffect(() => {
     const handleResize = () => {

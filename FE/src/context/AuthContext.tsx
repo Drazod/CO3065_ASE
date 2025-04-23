@@ -26,10 +26,8 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
       if (storedToken) {
         try {
-          console.log('Verifying token...');
           const response = await axiosInstance.get<{ user: IUser }>('/auth/me');
           if (response.data && response.data.user) {
-            console.log('Token verified, user data received.');
             setUser(response.data.user);
             setToken(storedToken);
           } else {
@@ -47,7 +45,6 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
         }
       } else {
-        console.log("No stored token found.");
         setLoading(false);
       }
     };
@@ -59,11 +56,9 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     setToken(token);
     localStorage.setItem(AUTH_TOKEN_KEY, token);
-    console.log("AuthContext: User logged in, state updated.");
   };
 
   const logout = () => {
-    console.log("AuthContext: Logging out.");
     setUser(null);
     setToken(null);
     localStorage.removeItem(AUTH_TOKEN_KEY);

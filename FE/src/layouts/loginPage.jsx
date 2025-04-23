@@ -14,17 +14,13 @@ export default function LogInPage() {
 
   const onSubmit = async (values) => {
     try {
-      console.log("Formik onSubmit: Calling API /auth/signin");
-      console.log('Formik data:', values.username, values.password);
       const response = await axiosInstance.post('/auth/signin', {
         username: values.username,
         password: values.password,
       });
-      console.log("API Response:", response.data);
 
       if (response.data && response.data.user && response.data.token) {
         login(response.data.user, response.data.token);
-        console.log("Formik onSubmit: Login successful, context updated.");
       } else {
         throw new Error('Login response missing user data or token.');
       }
