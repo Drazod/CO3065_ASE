@@ -25,7 +25,6 @@ export default function LogInPage() {
         throw new Error('Login response missing user data or token.');
       }
     } catch (error) {
-      console.error("Formik onSubmit: Login API call failed:", error);
       const axiosError = error;
       const message = axiosError.response?.data?.message || axiosError.message || 'Login failed. Please check your credentials.';
       setSubmitError(message);

@@ -31,12 +31,10 @@ export const AuthProvider = ({ children }) => {
             setUser(response.data.user);
             setToken(storedToken);
           } else {
-            console.warn("Token verification response missing user data.");
             logout();
           }
         } catch (error) {
           const axiosError = error as AxiosError;
-          console.error("Token verification failed:", axiosError.response?.status, axiosError.message);
           if (axiosError.response?.status !== 401) {
             logout();
           }
