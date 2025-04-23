@@ -55,7 +55,6 @@ exports.signInUser = async (req, res) => {
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      console.error("JWT_SECRET is not defined in .env file!");
       return res.status(500).json({ message: "Server configuration error." });
     }
 
@@ -74,7 +73,6 @@ exports.signInUser = async (req, res) => {
       user: userResponse
     });
   } catch (error) {
-    console.error("Signin Error:", error);
     res.status(500).json({ message: 'Server error during sign in.' });
   }
 }
@@ -93,7 +91,6 @@ exports.verifyToken = async (req, res) => {
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      console.error('JWT_SECRET not defined in environment.');
       return res.status(500).json({ message: 'Server configuration error.' });
     }
 
@@ -101,7 +98,6 @@ exports.verifyToken = async (req, res) => {
     try {
       decoded = jwt.verify(token, secret);
     } catch (err) {
-      console.error('Token verification failed:', err.message);
       return res.status(401).json({ message: 'Invalid or expired token.' });
     }
 
@@ -112,7 +108,6 @@ exports.verifyToken = async (req, res) => {
 
     return res.status(200).json({ user });
   } catch (error) {
-    console.error('Unexpected error in verifyToken:', error);
     return res.status(500).json({ message: 'Server error verifying token.' });
   }
 };
