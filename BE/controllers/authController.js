@@ -27,7 +27,6 @@ exports.signUpUser = async (req, res) => {
 
     res.status(201).json({ message: 'User created successfully', user: userResponse });
   } catch (error) {
-    console.log("Sign Up Error:", error);
     if (error.name == 'ValidationError') {
       return res.status(400).json({ message: 'Validation failed', errors: error.errors });
     }
@@ -84,7 +83,6 @@ exports.verifyToken = async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('Missing or invalid Authorization header.');
       return res.status(401).json({ message: 'Authorization header missing or malformed.' });
     }
 
@@ -109,7 +107,6 @@ exports.verifyToken = async (req, res) => {
 
     const user = await User.findById(decoded.userId).select('-password');
     if (!user) {
-      console.log('User not found for ID:', decoded.userId);
       return res.status(404).json({ message: 'User not found.' });
     }
 
