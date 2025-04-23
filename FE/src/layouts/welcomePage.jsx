@@ -25,7 +25,7 @@ const Welcome = () => {
           </h1>
           <nav className="space-x-8 font-semibold text-xl mr-2">
             <a href="#" className="">ABOUT</a>
-            <a href="#" className="">LOG IN</a>
+            <a href="/login" className="">LOG IN</a>
             <a href="#" className="">CONTACT</a>
           </nav>
         </header>
