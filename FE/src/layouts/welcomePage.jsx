@@ -41,7 +41,7 @@ const Welcome = () => {
 
             {/* Carousel Buttons */}
             <div className="flex z-30 space-x-2 mt-8">
-              <a href="/store">
+              <a href="/booking">
                   <button
                     className="p-2 text-white bg-[#4A6FA5] hover:bg-[#59D2FE] font-bold text-base w-full h-full z-10"
                     style={{ fontFamily: "'Josefin Sans', serif" }}

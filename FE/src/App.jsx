@@ -4,7 +4,6 @@ import Booking from "./layouts/bookPage";
 import LogInPage from "./layouts/loginPage";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import Register from "./layouts/registerPage";
-import Booking from "./layouts/bookPage";
 
 const App = () => {
   return (

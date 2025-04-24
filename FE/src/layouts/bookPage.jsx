@@ -12,6 +12,7 @@ import down from "../assets/store/down.png";
 import alt from "../assets/store/alt.png";
 import DatePicker from "react-datepicker";
 import RoomPopup from "../components/bookPage/roomdetailPopUp";
+import room from "../assets/room1.jpg";
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 const Booking= () => {
@@ -28,7 +29,7 @@ const Booking= () => {
     
     <div className="relative-container noise-overlay min-h-screen flex flex-col">
       <Header />
-      <RoomPopup show={showPopup} onClose={() => setShowPopup(false)} />
+      <RoomPopup show={showPopup} roomImage={room} onClose={() => setShowPopup(false)} />
       <section className="relative pt-52 h-full flex flex-col items-center justify-center">
         {/* Hero Title */}
         <div className="text-center mb-10">
@@ -148,7 +149,7 @@ const Booking= () => {
               </div>
             </div>
 
-            <button  onClick={() => setShowPopup(true)} className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
+            <button   className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
               FIND
             </button>
           </div>
@@ -185,7 +186,7 @@ const Booking= () => {
             <div key={i} className="flex bg-white rounded-xl shadow-md overflow-hidden">
               {/* Image */}
               <img
-                src="/assets/meeting-room.jpg"
+                src={room}
                 alt="Meeting Room"
                 className="w-1/3 object-cover h-full rounded-l-xl"
               />
@@ -210,9 +211,9 @@ const Booking= () => {
               </div>
 
               {/* Book Button */}
-              <div className="w-24 bg-[#4A6FA5] text-white text-center flex items-center justify-center text-lg font-bold rounded-l-xl">
+              <button onClick={() => setShowPopup(true)} className="w-24 bg-[#4A6FA5] text-white text-center flex items-center justify-center text-lg font-bold rounded-l-xl">
                 BOOK
-              </div>
+              </button>
             </div>
           ))}
         </div>

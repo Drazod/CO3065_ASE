@@ -20,7 +20,7 @@ export default function Header() {
   return (
     <header className={`fixed top-0 left-0 w-full text-[#E8F1F2] bg-[#4A6FA5] grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} items-center text-[22px] px-6 py-6 border-b border-[#434237] z-20 font-Jsans`}>
       <div className="flex items-center space-x-6">
-        <a href="/store">
+        <a href="/">
           <button className=" text-[#1D1A05] rounded-full py-2 px-4 bg-[#E8F1F2] hover:bg-[#D6E5E3] transition-colors duration-300 z-20">
             home
           </button>
@@ -29,7 +29,7 @@ export default function Header() {
 
       {!isMobile && (
         <div className="flex justify-center">
-          <a href="/home">
+          <a href="/">
             <h1 className="text-[33px] font-dancing font-semibold mr-6">
               HRB
             </h1>
@@ -59,9 +59,9 @@ export default function Header() {
 
       {isMobile && (
         <div className="flex justify-center mt-4">
-          <a href="/home">
+          <a href="/">
             <h1 className="text-[30px] font-dancing font-semibold">
-              Moda
+              HRB
             </h1>
           </a>
         </div>
