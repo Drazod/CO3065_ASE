@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Welcome from "./layouts/welcomePage";
-// import Home from "./layouts/homePage";
 import Store from "./layouts/storePage";
-// import Product from "./layouts/productPage";
+import Register from "./layouts/registerPage";
 
 const App = () => {
   return (
@@ -11,6 +10,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Welcome/>}/>
         <Route path="/store" element={<Store/>}/>
+        <Route path="/register" element={<Register/>}/>
         {/* <Route path="/home" element={<Home/>}/>
 
         <Route path="/product" element={<Product/>}/> */}

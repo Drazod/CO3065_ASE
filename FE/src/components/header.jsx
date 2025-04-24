@@ -17,10 +17,10 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 w-full text-white bg-[#132565] grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} items-center text-[22px] px-6 py-6 border-b border-[#434237] z-20 font-Jsans`}>
+    <header className={`fixed top-0 left-0 w-full text-[#E8F1F2] bg-[#4A6FA5] grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} items-center text-[22px] px-6 py-6 border-b border-[#434237] z-20 font-Jsans`}>
       <div className="flex items-center space-x-6">
         <a href="/store">
-          <button className=" text-white rounded-full py-2 px-4 bg-[#434237] hover:bg-gray-400 transition-colors duration-300 z-20">
+          <button className=" text-[#1D1A05] rounded-full py-2 px-4 bg-[#E8F1F2] hover:bg-[#D6E5E3] transition-colors duration-300 z-20">
             home
           </button>
         </a>

@@ -75,14 +75,14 @@ const Booking= () => {
 
         <div className=" grid grid-cols-3 gap-4 pb-8 px-12">
           {/* Quote Section */}
-          <blockquote className="font-Jsans font-medium text-[#434237] text-2xl leading-[50px]">
+          <blockquote className="font-Jsans font-medium text-[#1D1A05] text-2xl leading-[50px]">
             <p className="text-[128px] font-jokey">“</p>
             <p>
               A smart campus begins with smart scheduling. Find your space, book your slot, and make every moment productive.
             </p>
           </blockquote>
           <div className="flex justify-center mt-auto ">
-            <button className="flex flex-row items-center bg-[#4d77f5c5] px-6 py-2 rounded-xl  text-black font-bold text-base font-Jsans shadow-md border-[0.5px] border-[#A3A3A3] hover:bg-gray-300 transition">
+            <button className="flex flex-row items-center bg-[#4A6FA5] px-6 py-2 rounded-xl  text-[#1D1A05] font-bold text-base font-Jsans shadow-md border-[0.5px] border-[#A3A3A3] hover:bg-gray-300 transition">
               <span>SCROLL DOWN</span>
               <div className="relative ml-2 top-1 transform -translate-y-1/2 flex flex-col items-center">
                 <img src={down} alt="Scroll Down Icon" className="w-full h-full animate-move-down" />
@@ -96,18 +96,18 @@ const Booking= () => {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-3 h-5 border-[2px] border-blue-900 rounded-full bg-black"
+                  className="w-3 h-5 border-[2px] border-blue-900 rounded-full bg-[#1D1A05]"
                   style={{ transform: 'rotate(-20deg)' }}
                 ></div>
               ))}
             </div>
             <div className="flex items-center justify-end z-10 space-x-px">
-                <div className="flex flex-col items-center justify-center w-20 h-28 bg-white border border-blue-900 rounded-md shadow-md">
+                <div className="flex flex-col items-center justify-center w-20 h-28 bg-[#E09891] border border-blue-900 rounded-md shadow-md">
                   <span className="text-xs tracking-widest font-bold">{getMonthName(selectedDate)}</span>
-                  <span className="text-3xl font-black text-black">{selectedDate.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                  <span className="text-3xl font-black text-[#1D1A05]">{selectedDate.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                 </div>
-                <div className="flex items-center justify-center w-28 h-28 bg-white border border-black rounded-md shadow-md">
-                  <span className="text-4xl font-black text-black">{selectedDate.getDate()}</span>
+                <div className="flex items-center justify-center w-28 h-28 bg-[#E09891] border border-[#1D1A05] rounded-md shadow-md">
+                  <span className="text-6xl font-black text-[#1D1A05]">{selectedDate.getDate()}</span>
               </div>
             </div>
           </div>
@@ -115,17 +115,17 @@ const Booking= () => {
       </section>
 
       {/* Room Booking Filter Section */}
-      <section className="py-16 px-8 bg-white text-gray-800">
-        <div className="max-w-5xl mx-auto p-8 rounded-3xl shadow-md bg-blue-100">
+      <section className="py-16 px-8 bg-white text-[#1D1A05]">
+        <div className="max-w-5xl mx-auto p-8 rounded-3xl shadow-md bg-[#4A6FA5]">
           <h2 className="text-3xl font-semibold text-center mb-1">Book a Room</h2>
-          <p className="text-center text-gray-600 mb-8">Discover the perfect space for you!</p>
+          <p className="text-center text-[#1D1A05] mb-8">Discover the perfect space for you!</p>
 
           <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
             {/* Date Picker */}
             <div className="flex flex-col items-start">
               <label className="text-sm font-medium mb-1">Date</label>
-              <div className="flex items-center bg-white px-4 py-2 rounded shadow-sm">
-                <FaCalendarAlt className="mr-2 text-gray-500" />
+              <div className="flex items-center bg-[#E8F1F2] px-4 py-2 rounded shadow-sm">
+                <FaCalendarAlt className="mr-2 text-[#1D1A05]" />
                 <DatePicker
                   selected={selectedDate}
                   onChange={(date) => setSelectedDate(date)}
@@ -139,8 +139,8 @@ const Booking= () => {
             {/* Person Picker */}
             <div className="flex flex-col items-start">
               <label className="text-sm font-medium mb-1">Size</label>
-              <div className="flex items-center gap-2 bg-white px-4 py-2 rounded shadow-sm">
-                <FaUser className="text-gray-600" />
+              <div className="flex items-center gap-2 bg-[#E8F1F2] px-4 py-2 rounded shadow-sm">
+                <FaUser/>
                 <span>Adults</span>
                 <select className="px-2 py-1 rounded border border-gray-300">
                   {[1, 2, 3, 4, 5].map(n => <option key={n}>{n}</option>)}
@@ -148,66 +148,76 @@ const Booking= () => {
               </div>
             </div>
 
-            <button  onClick={() => setShowPopup(true)} className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 mt-4 md:mt-6">
-              BOOK NOW
+            <button  onClick={() => setShowPopup(true)} className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
+              FIND
             </button>
           </div>
         </div>
       </section>
 
       {/* Room Booking List Section */}
-      <section className="py-16 px-8 bg-gray-100 text-gray-800">
+      <section className="py-16 px-8 text-[#1D1A05]">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-3xl font-semibold">Result</h2>
-            <p className="text-sm text-blue-500">
+            <p className="text-sm ">
               Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
             </p>
           </div>
-          <div class="flex overflow-hidden border-x rounded-bl-[80px] rounded-br-[80px] bg-gradient-to-r from-white via-[#667085] to-white py-[1px] pt-[1px] pb-1">
-            <button className="bg-[#6c7389] text-white text-sm font-semibold px-10 py-4 rounded-bl-[80px]">
-                Short-term
+          <div class="flex overflow-hidden border-x rounded-bl-[80px] rounded-br-[80px] bg-gradient-to-r from-white via-[#4A6FA5] to-white py-[1px] pt-[1px] pb-1">
+            <button className="bg-[#4A6FA5] text-white text-sm font-semibold px-10 py-4 rounded-bl-[80px]">
+                Base 1
               </button>
-              <button className="bg-white text-sm font-semibold text-gray-800 px-10 py-4 " >
-                Long-term
+              <button className="bg-white text-sm font-semibold px-10 py-4 " >
+                Base 2
               </button>
-              <button className="bg-white text-sm font-semibold text-gray-800 px-10 py-4" >
-                Foreigner
+              <button className="bg-white text-sm font-semibold px-10 py-4" >
+                Base 3
               </button>
           </div>
         </div>
 
-        <div className="grid gap-6 max-w-4xl mx-auto">
-          {[1, 2, 3].map((_, i) => (
-            <div key={i} className="flex items-center bg-white rounded-xl shadow-md overflow-hidden">
-              {/* Left form section */}
-              <div className="flex-grow px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="From"
-                    className="bg-gray-100 rounded px-4 py-2 text-sm outline-none"
-                  />
-                  <img src="/assets/bus-icon.png" alt="icon" className="w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="To"
-                    className="bg-gray-100 rounded px-4 py-2 text-sm outline-none"
-                  />
+
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {[1, 2, 3, 4].map((_, i) => (
+            <div key={i} className="flex bg-white rounded-xl shadow-md overflow-hidden">
+              {/* Image */}
+              <img
+                src="/assets/meeting-room.jpg"
+                alt="Meeting Room"
+                className="w-1/3 object-cover h-full rounded-l-xl"
+              />
+
+              {/* Info Section */}
+              <div className="flex-grow p-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">CR New York</h3>
+                  <p className="text-sm text-gray-600">Near Lobby Lounge</p>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-xs text-gray-400">01/01/2000</span>
-                  <div className="w-5 h-5 bg-gray-800 rounded-full"></div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-600 text-xl">🛏️</span>
+                    <span className="text-gray-800 font-semibold">12</span>
+                  </div>
+                  <div className="flex gap-2 text-2xl">
+                    <span>🎤</span>
+                    <span>🖥️</span>
+                    <span>📸</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Buy button */}
-              <div className="w-32 bg-[#6c7389] text-white text-center flex items-center justify-center text-xl font-bold py-10 rounded-l-xl">
-                BUY
+              {/* Book Button */}
+              <div className="w-24 bg-[#4A6FA5] text-white text-center flex items-center justify-center text-lg font-bold rounded-l-xl">
+                BOOK
               </div>
             </div>
           ))}
         </div>
+
+
 
         <div className="flex justify-center mt-6">
           <div className="flex space-x-1">

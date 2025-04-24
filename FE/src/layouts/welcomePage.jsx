@@ -18,10 +18,10 @@ const Welcome = () => {
         />
       </Helmet>
 
-      <div className="h-screen w-screen flex flex-col text-[#0c0f3f] bg-[url('./assets/welcomepage/background.jpg')] bg-cover bg-opacity-10 bg-no-repeat bg-center relative ">
+      <div className="h-screen w-screen flex flex-col text-[#1D1A05] bg-[url('./assets/welcomepage/background.jpg')] bg-cover bg-opacity-10 bg-no-repeat bg-center relative ">
         <header className="absolute top-0 left-0 w-full flex justify-between items-center p-6 z-20">
           <h1 className="text-2xl font-light tracking-widest">
-            <span className="font-bold text-[#132565]">HCMUT</span> ROOM BOOKING
+            <span className="font-bold text-[#1D1A05]">HCMUT</span> ROOM BOOKING
           </h1>
           <nav className="space-x-8 font-semibold text-xl mr-2">
             <a href="#" className="">ABOUT</a>
@@ -43,7 +43,7 @@ const Welcome = () => {
             <div className="flex z-30 space-x-2 mt-8">
               <a href="/store">
                   <button
-                    className="p-2 text-white bg-blue-800 hover:bg-[#1e2e6a] font-bold text-base w-full h-full z-10"
+                    className="p-2 text-white bg-[#4A6FA5] hover:bg-[#59D2FE] font-bold text-base w-full h-full z-10"
                     style={{ fontFamily: "'Josefin Sans', serif" }}
                   >
                     BOOK NOW
