@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { FaUserCircle, FaShoppingCart, FaGift } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 // import CartModal from "../layouts/cart";
 
 export default function Header() {
   // const [showCart, setShowCart] = useState(false);
-  console.log("Welcome Page");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,8 +48,9 @@ export default function Header() {
         {/* <a href={memberData ? "/profile" : "/login"} className="flex items-center space-x-2"> */}
         <a className="flex items-center space-x-2">
           <FaUserCircle className="text-xl hover:text-gray-600" />
-            <span className="text-base font-medium">Login</span>
+            <span className="text-base font-medium">{user.username}</span>
         </a>
+        <button onClick={logout}>Log Out</button>
 
         {/* <FaShoppingCart onClick={() => setShowCart(true)} className="text-xl hover:text-gray-600" />
         <CartModal showCart={showCart} setShowCart={setShowCart} /> */}
