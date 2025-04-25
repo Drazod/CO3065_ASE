@@ -9,7 +9,7 @@ export default function LogInPage() {
   const { login, user } = useAuth();
 
   if (user) {
-    return <Navigate to="/store" />;
+    return <Navigate to="/" />;
   }
 
   const onSubmit = async (values) => {

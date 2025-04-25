@@ -34,7 +34,7 @@ const Footer = () => {
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <footer className="bg-[#132565] py-8 min-w-screen z-50 flex">
+    <footer className="bg-[#4A6FA5] py-8 min-w-screen z-50 flex">
       <div className="container mx-auto px-4">
         {/* Footer Content */}
         <div className="flex justify-between">

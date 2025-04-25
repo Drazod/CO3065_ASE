@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import { IUser } from '../constants/IUser';
 import axiosInstance from '../configs/axiosInstance';
+import { Navigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 
 const AUTH_TOKEN_KEY = 'auth_token';

@@ -1,29 +1,32 @@
 import React from "react";
-import logo from '../assets/logo.png';
+
 
 const Register = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Logo */}
-      <div className="w-1/2 bg-[#4A6FA5] flex items-center justify-center">
-        <img
-          src={logo}
-          alt="Logo"
-          className="h-auto mb-4"
-        />
-        <h1 className="text-4xl font-bold text-[#D6E5E3]">
-          HCMUT room booking
-        </h1>
-      </div>
+      <a href="/" className="w-1/2 bg-[#4A6FA5] items-center flex justify-center">
+        <button className="flex items-center space-x-2 justify-center">
+          <img
+            src="/assets/hcmut-logo.svg"
+            alt="Logo"
+            className="h-20 mb-4"
+          />
+          <h1 className="text-4xl font-bold text-[#D6E5E3]">
+            SCAMS
+          </h1>
+        </button>
+      </a>
+
 
       {/* Right side - Form */}
       <div className="w-1/2 bg-[#E8F1F2] flex flex-col justify-center items-center px-20">
         <div className="w-full max-w-sm">
-          <h2 className="text-4xl font-semibold text-[#4A6FA5] mb-1">
+          <h2 className="text-4xl font-bold text-[#4A6FA5] mb-1">
             | <span className="text-[#1D1A05]">Hello new friend</span>
           </h2>
           <p className="text-LG text-gray-500 mb-6">
-            Already have an account. <a href="#" className="text-[#E09891]">Click here</a>
+            Already have an account. <a href="/login" className="text-[#E09891]">Click here</a>
           </p>
 
           <input

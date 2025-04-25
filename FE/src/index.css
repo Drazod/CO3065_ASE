@@ -48,7 +48,30 @@ code {
   z-index: 0; /* Keeps it below all other elements */
 }
 
+/* Inside your CSS file or tailwind.css with @layer base/utilities/components */
+.react-datepicker {
+  background-color: #E8F1F2 !important; /* dark bg */
+  border: none !important;
+  color: #1D1A05 !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem !important;
+  padding: 2px;
+  border-radius: 0.75rem;
+}
+
+
+.react-datepicker-time__input {
+  background-color: #E8F1F2 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
 .main-content {
   position: relative;
   z-index: 1; /* Keeps the layout above the noise */
+}
+.react-datepicker-time__caption {
+  display: none !important;
 }

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Welcome from "./layouts/welcomePage";
 import Booking from "./layouts/bookPage";
 import LogInPage from "./layouts/loginPage";
+import Profile from "./layouts/profilePage";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import Register from "./layouts/registerPage";
 
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Welcome />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking" element={<Booking/>}/>
+        <Route path="/profile" element={<Profile />} />
         {/* <Route
           path="/booking"
           element={

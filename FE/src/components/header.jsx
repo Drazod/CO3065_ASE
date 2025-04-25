@@ -46,11 +46,31 @@ export default function Header() {
         </a>
         
         {/* <a href={memberData ? "/profile" : "/login"} className="flex items-center space-x-2"> */}
-        <a className="flex items-center space-x-2">
-          <FaUserCircle className="text-xl hover:text-gray-600" />
-            <span className="text-base font-medium">{user.username}</span>
-        </a>
-        <button onClick={logout}>Log Out</button>
+        {user ? (
+          <>
+            <div className="flex items-center space-x-2">
+              <FaUserCircle className="text-xl hover:text-gray-600" />
+              <span className="text-base font-medium">{user.username}</span>
+            </div>
+            <button
+              onClick={logout}
+              className="text-sm bg-[#E8F1F2] text-[#1D1A05] px-3 py-1 rounded hover:bg-[#D6E5E3] transition"
+            >
+              Log Out
+            </button>
+          </>
+        ) : (
+          <a
+            href="/login"
+            className="flex items-center space-x-2"
+          >
+            <div className="flex items-center space-x-2">
+              <FaUserCircle className="text-xl hover:text-gray-600" />
+              <span className="text-base font-medium">Login</span>
+            </div>
+          </a>
+        )}
+
 
         {/* <FaShoppingCart onClick={() => setShowCart(true)} className="text-xl hover:text-gray-600" />
         <CartModal showCart={showCart} setShowCart={setShowCart} /> */}

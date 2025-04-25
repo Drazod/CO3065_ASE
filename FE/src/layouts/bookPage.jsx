@@ -13,11 +13,15 @@ import alt from "../assets/store/alt.png";
 import DatePicker from "react-datepicker";
 import RoomPopup from "../components/bookPage/roomdetailPopUp";
 import room from "../assets/room1.jpg";
+
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 const Booking= () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+
 
 
   const getMonthName = (date) => {
@@ -137,19 +141,48 @@ const Booking= () => {
               </div>
             </div>
 
-            {/* Person Picker */}
+            {/* Start Time Picker */}
             <div className="flex flex-col items-start">
-              <label className="text-sm font-medium mb-1">Size</label>
+              <label className="text-sm font-medium mb-1">Start Time</label>
+              <DatePicker
+                selected={startTime}
+                onChange={(date) => setStartTime(date)}
+                showTimeSelectOnly
+                showTimeInput
+                inline
+                dateFormat="h:mm aa"
+                className="!bg-transparent outline-none"
+                
+              />
+            </div>
+
+            {/* End Time Picker */}
+            <div className="flex flex-col items-start">
+              <label className="text-sm font-medium mb-1">End Time</label>
+              <DatePicker
+                selected={endTime}
+                onChange={(date) => setEndTime(date)}
+                showTimeSelectOnly
+                showTimeInput
+                inline
+                dateFormat="h:mm aa"
+                className="!bg-transparent outline-none"
+              />
+            </div>
+
+
+            {/* Seats Picker */}
+            <div className="flex flex-col items-start">
+              <label className="text-sm font-medium mb-1">Seats</label>
               <div className="flex items-center gap-2 bg-[#E8F1F2] px-4 py-2 rounded shadow-sm">
-                <FaUser/>
-                <span>Adults</span>
+                <FaUser />
+                <span>Students</span>
                 <select className="px-2 py-1 rounded border border-gray-300">
                   {[1, 2, 3, 4, 5].map(n => <option key={n}>{n}</option>)}
                 </select>
               </div>
             </div>
-
-            <button   className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
+            <button className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
               FIND
             </button>
           </div>
