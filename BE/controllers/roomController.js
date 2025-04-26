@@ -1,72 +1,104 @@
-const Room = require('../models/Room');
+const Room = require("../models/Room");
 
-// GET
+// GET: Get schedule of a room by ID and date
 exports.getRoomSchedule = async (req, res) => {
   const { room_id, date } = req.params;
 
   try {
     const room = await Room.findById(room_id);
-    if (!room) return res.status(404).json({ error: 'Room not found' });
+    if (!room) return res.status(404).json({ error: "Room not found" });
 
-    const schedule = room.schedules.find(s => s.date === date);
+    const schedule = room.schedules.find(
+      (s) => s.date.toISOString().split("T")[0] === date
+    );
     if (schedule) {
       return res.json(schedule);
     }
 
-    // If no schedule exists, return empty default
-    const defaultHours = Array.from({ length: 24 }, (_, hour) => ({
-      hour,
-      occupied: false,
-      bookedBy: null,
-    }));
-
-    return res.json({ date, hours: defaultHours });
-
+    return res.json({});
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-// PUT
+// PUT: Update room schedule
 exports.updateRoomSchedule = async (req, res) => {
   const { room_id, date } = req.params;
   const { hours } = req.body;
 
   try {
     const room = await Room.findById(room_id);
-    if (!room) return res.status(404).json({ error: 'Room not found' });
+    if (!room) return res.status(404).json({ error: "Room not found" });
 
-    let schedule = room.schedules.find(s => s.date === date);
+    const now = new Date();
+    const inputDate = new Date(date); // Date from URL (example: 2025-04-27)
+
+    const futureHours = hours.filter((h) => {
+      const start = new Date(h.start);
+      const end = new Date(h.end);
+
+      // Check 1: start must be after now
+      if (start <= now) return false;
+
+      // Check 2: start and end must be on the same date as URL date
+      const startDate = start.toISOString().split("T")[0];
+      const endDate = end.toISOString().split("T")[0];
+      const targetDate = inputDate.toISOString().split("T")[0];
+
+      if (startDate !== targetDate || endDate !== targetDate) return false;
+
+      return true;
+    });
+
+    if (futureHours.length === 0) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "No valid future times provided or times are not on the specified date.",
+        });
+    }
+
+    let schedule = room.schedules.find(
+      (s) => s.date.toISOString().split("T")[0] === date
+    );
 
     if (schedule) {
-      schedule.hours = hours;
+      schedule.hours = futureHours;
     } else {
-      room.schedules.push({ date, hours });
+      room.schedules.push({ date: new Date(date), hours: futureHours });
     }
 
     await room.save();
     res.json({ success: true });
-
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-// GET
+// GET: Return all rooms
 exports.getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
     res.json(rooms);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch rooms' });
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch rooms" });
   }
 };
 
-
-// exports.bookRoom = async (req, res) => {
-//   return res.status(410).json({
-//     error: 'Use schedule API to book specific times instead of whole-room flag.',
-//   });
-// };
+// GET: Return one room by ID
+exports.getRoomById = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.room_id);
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    res.json(room);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch room" });
+  }
+};
