@@ -8,7 +8,7 @@ import axiosInstance from '../configs/axiosInstance';
 export default function ProfilePage() {
   const [rooms, setRooms] = useState([]);
   const { user, logout } = useAuth();
-  const [profile, setProfile] = useState(null); // ← make sure you handle `profile`
+  const [profile, setProfile] = useState(null);
   const [bookings, setBookings] = useState([
     { id: "#1234", items: "Shirt,Jean", date: "10/12/2024", price: "200.000 VND" },
     { id: "#1235", items: "Shirt,Jean", date: "11/12/2024", price: "200.000 VND" },
@@ -43,12 +43,12 @@ export default function ProfilePage() {
               />
               <div>
                 <h2 className="text-2xl font-semibold">{profile?.user.name || "Guest"}</h2>
-                <p className="text-gray-600">{profile?.user.email || "no-email@example.com"}</p>
+                <p className="text-gray-600">{profile?.user.role}</p>
               </div>
             </div>
             <div className="mt-4 text-[#1D1A05] flex justify-between">
-              <p>Golden member</p>
-              <p className="text-gray-600">4000pts</p>
+              <p>ID</p>
+              <p className="text-gray-600">{profile?.user._id}</p>
             </div>
 
             <div className="mt-6 space-y-6">
@@ -94,15 +94,15 @@ export default function ProfilePage() {
       <section className="mt-10  mx-4 bg-[#4A6FA5] p-6 rounded-2xl shadow">
         <h2 className="text-lg font-semibold mb-4">Booking history</h2>
         <div className="space-y-4">
-          {bookings.map((booking, i) => (
+          {profile?.user.bookings.map((booking) => (
             <div
-              key={i}
+              key={booking._id}
               className="flex justify-between items-center bg-[#E8F1F2] px-4 py-3 rounded-lg shadow text-[#1D1A05]"
             >
               <span className="font-bold">{booking.id}</span>
-              <span>{booking.items}</span>
-              <span>{booking.date}</span>
-              <span>{booking.price}</span>
+              <span>{booking.room?.name}</span>
+              <span>{new Date(booking.date).toLocaleDateString()}</span>
+              <span>{booking.hour}</span>
               <button className="text-gray-700 hover:text-[#1D1A05]">▼</button>
             </div>
           ))}
