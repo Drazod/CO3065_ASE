@@ -31,14 +31,33 @@ exports.updateRoomSchedule = async (req, res) => {
     const room = await Room.findById(room_id);
     if (!room) return res.status(404).json({ error: "Room not found" });
 
-    hours.for;
-
-    // Only allow hours that start time is in the future
     const now = new Date();
-    const futureHours = hours.filter((h) => new Date(h.start) > now);
+    const inputDate = new Date(date); // Date from URL (example: 2025-04-27)
+
+    const futureHours = hours.filter((h) => {
+      const start = new Date(h.start);
+      const end = new Date(h.end);
+
+      // Check 1: start must be after now
+      if (start <= now) return false;
+
+      // Check 2: start and end must be on the same date as URL date
+      const startDate = start.toISOString().split("T")[0];
+      const endDate = end.toISOString().split("T")[0];
+      const targetDate = inputDate.toISOString().split("T")[0];
+
+      if (startDate !== targetDate || endDate !== targetDate) return false;
+
+      return true;
+    });
 
     if (futureHours.length === 0) {
-      return res.status(400).json({ error: "No valid future times provided." });
+      return res
+        .status(400)
+        .json({
+          error:
+            "No valid future times provided or times are not on the specified date.",
+        });
     }
 
     let schedule = room.schedules.find(
