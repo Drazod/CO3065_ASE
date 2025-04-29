@@ -104,3 +104,77 @@ exports.getRoomById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch room" });
   }
 };
+
+// PUT: Edit a room by ID
+exports.editRoom = async (req, res) => {
+  try {
+    const { name, building, location, description, capacity, schedules } = req.body;
+    
+    // Check if another room with same name and building exists (excluding current room)
+    const existingRoom = await Room.findOne({
+      name,
+      building,
+      _id: { $ne: req.params.room_id }
+    });
+    
+    if (existingRoom) {
+      return res.status(400).json({ 
+        error: "A room with this name already exists in the specified building" 
+      });
+    }
+    
+    // Find room and update
+    const updatedRoom = await Room.findByIdAndUpdate(
+      req.params.room_id,
+      { name, building, location, description, capacity, schedules },
+      { new: true, runValidators: true }
+    );
+    
+    if (!updatedRoom) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    
+    res.json({ success: true, room: updatedRoom });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update room" });
+  }
+};
+
+// POST: Add a new room
+exports.addRoom = async (req, res) => {
+  try {
+    const { name, building, location, description, capacity } = req.body;
+    
+    // Validate required fields
+    if (!name || !building) {
+      return res.status(400).json({ error: "Name and building are required fields" });
+    }
+    
+    // Check if room with same name and building already exists
+    const existingRoom = await Room.findOne({ name, building });
+    if (existingRoom) {
+      return res.status(400).json({ 
+        error: "A room with this name already exists in the specified building" 
+      });
+    }
+    
+    // Create new room
+    const newRoom = new Room({
+      name,
+      building,
+      location: location || "CS1",
+      description: description || "No description available",
+      capacity: capacity || 30,
+      schedules: [] // Initialize with empty schedules
+    });
+    
+    // Save room to database
+    await newRoom.save();
+    
+    res.status(201).json({ success: true, room: newRoom });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to create room" });
+  }
+};
