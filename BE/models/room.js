@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 
+/*
 const hourSchema = new mongoose.Schema({
   start: Date,
   end: Date,
-  occupied: { type: Boolean, default: false },
-  bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
+*/
 
 const scheduleSchema = new mongoose.Schema({
   date: Date, // Format: 'DD-MM-YYYY'
-  hours: [hourSchema]
+  start: Date,
+  end: Date,
+  bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 const roomSchema = new mongoose.Schema({

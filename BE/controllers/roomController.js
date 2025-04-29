@@ -1,4 +1,4 @@
-const Room = require("../models/Room");
+const Room = require("../models/room");
 
 // GET: Get schedule of a room by ID and date
 exports.getRoomSchedule = async (req, res) => {
@@ -21,7 +21,8 @@ exports.getRoomSchedule = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
+//book = tao don moi(#id cua room)
+//edit = nguoi cu, edit tren cai don cu ( #id cua booking)
 // PUT: Update room schedule
 exports.updateRoomSchedule = async (req, res) => {
   const { room_id, date } = req.params;
@@ -59,17 +60,16 @@ exports.updateRoomSchedule = async (req, res) => {
             "No valid future times provided or times are not on the specified date.",
         });
     }
-
+/*
     let schedule = room.schedules.find(
       (s) => s.date.toISOString().split("T")[0] === date
     );
-
     if (schedule) {
       schedule.hours = futureHours;
     } else {
       room.schedules.push({ date: new Date(date), hours: futureHours });
     }
-
+*/
     await room.save();
     res.json({ success: true });
   } catch (err) {
@@ -77,6 +77,8 @@ exports.updateRoomSchedule = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
 
 // GET: Return all rooms
 exports.getAllRooms = async (req, res) => {

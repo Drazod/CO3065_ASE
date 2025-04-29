@@ -6,14 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import axiosInstance from '../configs/axiosInstance';
 
 export default function ProfilePage() {
-  const [rooms, setRooms] = useState([]);
   const { user, logout } = useAuth();
   const [profile, setProfile] = useState(null);
-  const [bookings, setBookings] = useState([
-    { id: "#1234", items: "Shirt,Jean", date: "10/12/2024", price: "200.000 VND" },
-    { id: "#1235", items: "Shirt,Jean", date: "11/12/2024", price: "200.000 VND" },
-    { id: "#1236", items: "Shirt,Jean", date: "12/12/2024", price: "200.000 VND" }
-  ]);
   useEffect(() => {
     const fetchData = async () => {
       try {
