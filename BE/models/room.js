@@ -8,7 +8,7 @@ const hourSchema = new mongoose.Schema({
 */
 
 const scheduleSchema = new mongoose.Schema({
-  date: Date, // Format: 'DD-MM-YYYY'
+  date: Date, // ISO format YYYY-MM-DD
   start: Date,
   end: Date,
   bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }

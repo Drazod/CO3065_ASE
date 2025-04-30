@@ -111,3 +111,43 @@ exports.verifyToken = async (req, res) => {
     return res.status(500).json({ message: 'Server error verifying token.' });
   }
 };
+
+exports.verifyRole = (roles) => async (req, res, next) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization header missing or malformed.' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token not found in Authorization header.' });
+    }
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ message: 'Server configuration error.' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, secret);
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid or expired token.' });
+    }
+
+    const user = await User.findById(decoded.userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (!roles.includes(user.role)) {
+      return res.status(403).json({ message: 'Forbidden: You do not have the required role.' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error verifying role.' });
+  }
+}
