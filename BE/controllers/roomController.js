@@ -104,6 +104,71 @@ exports.bookRoomSchedule = async (req, res) => {
   }
 };
 
+// PUT: Edit a schedule
+exports.updateRoomSchedule = async (req, res) => {
+  const user = req.user;
+  const { room_id, schedule_id } = req.params;
+  const { date, start, end } = req.body;
+
+  try {
+    // Checking the validity of each schedule
+    const _date = new Date(date);
+    const _start = new Date(start);
+    const _end = new Date(end);
+
+    if (isNaN(_date) || isNaN(_start) || isNaN(_end)) {
+      throw { status: 400, message: `Invalid date format.` };
+    }
+
+    if (_end <= _start) {
+      throw { status: 400, message: `The end time must be after the starting time in schedules[${i}].` };
+    }
+    
+    const room = await Room.findById(room_id);
+    if (!room) return res.status(404).json({ error: "Room not found" });
+
+    const schedule = room.schedules.id(schedule_id);
+    if (!schedule) return res.status(404).json({ error: "Schedule not found" });
+
+    // Checking if the user is authorized (bookedBy or staff)
+    if (!schedule.bookedBy.equals(user._id) && user.role !== "staff") {
+      return res.status(403).json({ error: "You are not authorized to edit this schedule" });
+    }
+
+    const formattedNewDate = toDMY(_date);
+
+    for (const oldSchedule of room.schedules) {
+      if (oldSchedule._id.equals(schedule_id)) continue; // Skip the updating schedule
+
+      if (toDMY(oldSchedule.date) !== formattedNewDate) continue; // Different dates
+
+      if (_start < oldSchedule.end && _end > oldSchedule.start) { // Overlapping times
+        return res.status(400).json({ error: `The schedule at ${toHM(_start)}-${toHM(_end)} overlaps with an existing schedule at ${toHM(oldSchedule.start)}-${toHM(oldSchedule.end)}.` });
+      }
+    }
+
+    // Push changes
+    schedule.date = _date;
+    schedule.start = _start;
+    schedule.end = _end;
+
+    await room.save();
+    return res.status(200).json({
+      message: 'Schedules updated successfully.',
+      schedule: {
+        id:    schedule._id,
+        date:  schedule.date,
+        start: schedule.start,
+        end:   schedule.end,
+        bookedBy: user._id,
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // GET: Return all rooms
 exports.getAllRooms = async (req, res) => {
   try {

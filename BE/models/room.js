@@ -1,12 +1,5 @@
 const mongoose = require('mongoose');
 
-/*
-const hourSchema = new mongoose.Schema({
-  start: Date,
-  end: Date,
-});
-*/
-
 const scheduleSchema = new mongoose.Schema({
   date: Date, // ISO format YYYY-MM-DD
   start: Date,
