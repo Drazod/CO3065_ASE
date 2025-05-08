@@ -58,7 +58,11 @@ code {
   padding: 2px;
   border-radius: 0.75rem;
 }
-
+.react-datepicker__input-time-container {
+  background-color: #E8F1F2 !important;
+  border-radius: 0.75rem;
+  margin: 0 !important;
+}
 
 .react-datepicker-time__input {
   background-color: #E8F1F2 !important;

@@ -101,7 +101,7 @@ exports.verifyToken = async (req, res) => {
       return res.status(401).json({ message: 'Invalid or expired token.' });
     }
 
-    const user = await User.findById(decoded.userId).select('-password');
+    const user = await User.findById(decoded.userId).select('-password').populate('bookings.room', 'name location capacity');
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }

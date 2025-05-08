@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Helmet } from 'react-helmet';
-import Footer from "../components/footer";
+import { useAuth } from "../context/AuthContext";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "../App.css";
 
 const Welcome = () => {
-
+  
+  const { user } = useAuth();
   return (
     <>
       {/* SEO Meta Tags */}
@@ -24,9 +25,14 @@ const Welcome = () => {
             <span className="font-bold text-[#1D1A05]">HCMUT</span> ROOM BOOKING
           </h1>
           <nav className="space-x-8 font-semibold text-xl mr-2">
-            <a href="#" className="">ABOUT</a>
-            <a href="/login" className="">LOG IN</a>
-            <a href="#" className="">CONTACT</a>
+            <a href="#">ABOUT</a>
+            <a href="#">CONTACT</a>
+            {user ? (
+              <a href="/profile">{user.name || "PROFILE"}</a>  // 👈 replace with actual name if available
+            ) : (
+              <a href="/login">LOG IN</a>
+            )}
+
           </nav>
         </header>
 

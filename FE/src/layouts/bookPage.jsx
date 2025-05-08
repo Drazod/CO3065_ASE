@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import middle from "../assets/store/middle.png";
@@ -12,17 +12,80 @@ import down from "../assets/store/down.png";
 import alt from "../assets/store/alt.png";
 import DatePicker from "react-datepicker";
 import RoomPopup from "../components/bookPage/roomdetailPopUp";
-import room from "../assets/room1.jpg";
+import roomImg from "../assets/room1.jpg";
+import axiosInstance from '../configs/axiosInstance';
 
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 const Booking= () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showPopup, setShowPopup] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
+  const [room, setRoom] = useState(null);
+  const [selectedBase, setSelectedBase] = useState("All");
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
+  const handleOpenPopup = (roomId) => {
+    const found = room?.find(r => r._id === roomId);
+    if (found) {
+      setSelectedRoom(found);
+      setShowPopup(true);
+    }
+  };
+  
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedRoom(null);
+  };
 
+  const getRoom = async () => {
+    try {
+      const res = await axiosInstance.get('/rooms');
+      setRoom(res.data);
+      console.log("Available rooms:", res.data);
+    } catch (err) {
+      console.error("Failed to fetch available rooms:", err);
+      alert("Something went wrong while searching for rooms.");
+    }
+  };
+
+  useEffect(() => {
+    getRoom();
+  }, []);
+  const handleFindRooms = async () => {
+    if (!startTime || !endTime) {
+      alert("Please select both start and end time.");
+      return;
+    }
+  
+    if (startTime >= endTime) {
+      alert("End time must be after start time.");
+      return;
+    }
+  
+    try {
+
+      const dateStr = selectedDate.toISOString().split('T')[0];
+      const startStr = startTime.toTimeString().slice(0, 5); 
+      const endStr = endTime.toTimeString().slice(0, 5);   
+  
+      const res = await axiosInstance.post('/rooms/find', {
+        date: dateStr,
+        start: startStr,
+        end: endStr
+      });
+      
+  
+      setRoom(res.data); // Update room state
+      console.log("Available rooms:", res.data);
+    } catch (err) {
+      console.error("Failed to fetch available rooms:", err);
+      alert("Something went wrong while searching for rooms.");
+    }
+  };
+  
+  
 
   const getMonthName = (date) => {
     const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -33,7 +96,12 @@ const Booking= () => {
     
     <div className="relative-container noise-overlay min-h-screen flex flex-col">
       <Header />
-      <RoomPopup show={showPopup} roomImage={room} onClose={() => setShowPopup(false)} />
+      <RoomPopup
+        show={showPopup}
+        roomImage={roomImg}
+        roomData={selectedRoom}
+        onClose={handleClosePopup}
+      />
       <section className="relative pt-52 h-full flex flex-col items-center justify-center">
         {/* Hero Title */}
         <div className="text-center mb-10">
@@ -137,6 +205,7 @@ const Booking= () => {
                   placeholderText="Check Available"
                   dateFormat="dd/MM/yyyy"
                   className="outline-none bg-transparent"
+                  minDate={new Date()}
                 />
               </div>
             </div>
@@ -182,7 +251,7 @@ const Booking= () => {
                 </select>
               </div>
             </div>
-            <button className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
+            <button onClick={handleFindRooms} className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
               FIND
             </button>
           </div>
@@ -193,21 +262,23 @@ const Booking= () => {
       <section className="py-16 px-8 text-[#1D1A05]">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-3xl font-semibold">Result</h2>
+            <h2 className="text-3xl font-semibold">Available room</h2>
             <p className="text-sm ">
               Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
             </p>
           </div>
-          <div class="flex overflow-hidden border-x rounded-bl-[80px] rounded-br-[80px] bg-gradient-to-r from-white via-[#4A6FA5] to-white py-[1px] pt-[1px] pb-1">
-            <button className="bg-[#4A6FA5] text-white text-sm font-semibold px-10 py-4 rounded-bl-[80px]">
-                Base 1
+          <div className="flex overflow-hidden border-x rounded-bl-[80px] rounded-br-[80px] bg-gradient-to-r from-white via-[#4A6FA5] to-white py-[1px] pt-[1px] pb-1">
+            {["All", "Base 1", "Base 2"].map(base => (
+              <button
+                key={base}
+                onClick={() => setSelectedBase(base)}
+                className={`px-10 py-4 text-sm font-semibold ${
+                  selectedBase === base ? "bg-[#4A6FA5] text-white" : "bg-white"
+                } ${base === "All" ? "rounded-bl-[80px]" : ""} ${base === "Base 2" ? "rounded-br-[80px]" : ""}`}
+              >
+                {base}
               </button>
-              <button className="bg-white text-sm font-semibold px-10 py-4 " >
-                Base 2
-              </button>
-              <button className="bg-white text-sm font-semibold px-10 py-4" >
-                Base 3
-              </button>
+            ))}
           </div>
         </div>
 
@@ -215,41 +286,51 @@ const Booking= () => {
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {[1, 2, 3, 4].map((_, i) => (
-            <div key={i} className="flex bg-white rounded-xl shadow-md overflow-hidden">
-              {/* Image */}
-              <img
-                src={room}
-                alt="Meeting Room"
-                className="w-1/3 object-cover h-full rounded-l-xl"
-              />
+          {room?.length > 0 ? (
+            room
+            .filter(r => selectedBase === "All" || r.building === selectedBase)
+            .map((r, i) => (          
+              <div key={r._id || i} className="flex bg-white rounded-xl shadow-md overflow-hidden">
+                {/* Image */}
+                <img
+                  src={roomImg} // replace with dynamic image if available: r.imageUrl || roomImg
+                  alt={r.name}
+                  className="w-1/3 object-cover h-full rounded-l-xl"
+                />
 
-              {/* Info Section */}
-              <div className="flex-grow p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">CR New York</h3>
-                  <p className="text-sm text-gray-600">Near Lobby Lounge</p>
-                </div>
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-red-600 text-xl">🛏️</span>
-                    <span className="text-gray-800 font-semibold">12</span>
+                {/* Info Section */}
+                <div className="flex-grow p-6 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">{r.name}</h3>
+                    <p className="text-sm text-gray-600">{r.location || 'No location info'}</p>
                   </div>
-                  <div className="flex gap-2 text-2xl">
-                    <span>🎤</span>
-                    <span>🖥️</span>
-                    <span>📸</span>
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-600 text-xl">🛏️</span>
+                      <span className="text-gray-800 font-semibold">{r.capacity || 0}</span>
+                    </div>
+                    <div className="flex gap-2 text-2xl">
+                      <span>🎤</span>
+                      <span>🖥️</span>
+                      <span>📸</span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Book Button */}
+                <button
+                  onClick={() => handleOpenPopup(r._id)} // optionally pass room info to popup
+                  className="w-24 bg-[#4A6FA5] text-white text-center flex items-center justify-center text-lg font-bold rounded-l-xl"
+                >
+                  BOOK
+                </button>
               </div>
-
-              {/* Book Button */}
-              <button onClick={() => setShowPopup(true)} className="w-24 bg-[#4A6FA5] text-white text-center flex items-center justify-center text-lg font-bold rounded-l-xl">
-                BOOK
-              </button>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-center col-span-2 text-gray-500">No rooms found.</p>
+          )}
         </div>
+
 
 
 

@@ -10,6 +10,7 @@ router.put("/rooms/:room_id/:schedule_id/schedule/", verifyRole(["lecturer", "st
 router.get("/rooms", roomController.getAllRooms);
 router.get("/rooms/:room_id", roomController.getRoomById);
 router.post("/rooms", roomController.addRoom);
+router.post("/rooms/find", roomController.findRooms);
 router.put("/rooms/:room_id", roomController.editRoom);
 
 module.exports = router;

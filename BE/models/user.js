@@ -26,8 +26,10 @@ const userSchema = new mongoose.Schema({
   bookings: [
     {
       room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room' },
-      date: String,
-      hour: Number
+      date: Date,
+      start: Date,
+      end: Date,
+      scheduleId: String
     }
   ]
 }, {

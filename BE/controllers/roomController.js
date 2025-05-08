@@ -1,4 +1,6 @@
 const Room = require("../models/room");
+const User = require('../models/user'); 
+
 
 const toDMY = (date) => date.toISOString().split("T")[0].split("-").reverse().join("-");
 const toHM = (date) => date.toISOString().split("T")[1].split(":").slice(0, 2).join(":");
@@ -44,8 +46,8 @@ exports.bookRoomSchedule = async (req, res) => {
     // Checking the validity of each schedule
     const newSchedule = schedules.map((sch, i) => {
       const _date = new Date(sch.date);
-      const _start = new Date(sch.start);
-      const _end = new Date(sch.end);
+      const _start = sch.start ? new Date(`${sch.date}T${sch.start}`) : null;
+      const _end = sch.end ? new Date(`${sch.date}T${sch.end}`) : null;
       if (isNaN(_date) || isNaN(_start) || isNaN(_end)) {
         throw { status: 400, message: `Invalid date format in schedules[${i}].` };
       }
@@ -61,35 +63,59 @@ exports.bookRoomSchedule = async (req, res) => {
       const formattedNewDate = toDMY(new_date);
 
       for (const oldSchedule of room.schedules) {
-        if (toDMY(oldSchedule.date) !== formattedNewDate) continue; // Different dates
-
-        if (new_start < oldSchedule.end && new_end > oldSchedule.start) { // Overlapping times
-          return res.status(400).json({ error: `The schedule on ${formattedNewDate} at ${toHM(new_start)}-${toHM(new_end)} overlaps with an existing schedule at ${toHM(oldSchedule.start)}-${toHM(oldSchedule.end)}.` });
+        if (toDMY(oldSchedule.date) !== formattedNewDate) continue;
+        if (new_start < oldSchedule.end && new_end > oldSchedule.start) {
+          return res.status(400).json({
+            error: `The schedule on ${formattedNewDate} at ${toHM(new_start)}-${toHM(new_end)} overlaps with an existing schedule at ${toHM(oldSchedule.start)}-${toHM(oldSchedule.end)}.`
+          });
         }
       }
     }
 
-    // Checking overlapping schedules (New vs New)
-    for(let i = 0; i < newSchedule.length; i++) {
-      for(let j = i + 1; j < newSchedule.length; j++) {
-        if (toDMY(newSchedule[i].date) !== toDMY(newSchedule[j].date)) continue; // Different dates
-
-        if (newSchedule[i].start < newSchedule[j].end && newSchedule[i].end > newSchedule[j].start) { // Overlapping times
-          return res.status(400).json({ error: `The schedule on ${toDMY(newSchedule[i].date)} at ${toHM(newSchedule[i].start)}-${toHM(newSchedule[i].end)} overlaps with another schedule at ${toHM(newSchedule[j].start)}-${toHM(newSchedule[j].end)}.` });
+    for (let i = 0; i < newSchedule.length; i++) {
+      for (let j = i + 1; j < newSchedule.length; j++) {
+        if (toDMY(newSchedule[i].date) !== toDMY(newSchedule[j].date)) continue;
+        if (newSchedule[i].start < newSchedule[j].end && newSchedule[i].end > newSchedule[j].start) {
+          return res.status(400).json({
+            error: `The schedule on ${toDMY(newSchedule[i].date)} at ${toHM(newSchedule[i].start)}-${toHM(newSchedule[i].end)} overlaps with another schedule at ${toHM(newSchedule[j].start)}-${toHM(newSchedule[j].end)}.`
+          });
         }
       }
     }
 
-    newSchedule.forEach(({date, start, end}) => {
+    const userDoc = await User.findById(user._id);
+    if (!userDoc) return res.status(404).json({ error: "User not found" });
+
+    // Push schedules into room
+    newSchedule.forEach(({ date, start, end }) => {
       room.schedules.push({
-        date: date,
-        start: start,
-        end: end,
+        date,
+        start,
+        end,
         bookedBy: user._id
       });
     });
 
     await room.save();
+
+    // Grab the newly inserted schedules with _id
+    const inserted = room.schedules.slice(-newSchedule.length);
+
+    // Update user bookings with booking IDs
+    const userToUpdate = await User.findById(user._id);
+    inserted.forEach((booking) => {
+      userToUpdate.bookings.push({
+        room: room._id,
+        date: booking.date,
+        start: booking.start,
+        end: booking.end,
+        scheduleId: booking._id
+      });
+    });
+    await userToUpdate.save();
+
+    await Promise.all([room.save(), userDoc.save()]);
+
     return res.status(201).json({
       message: 'Schedules booked successfully.',
       added: newSchedule.map(({ date, start, end }) => ({
@@ -109,19 +135,17 @@ exports.updateRoomSchedule = async (req, res) => {
   const user = req.user;
   const { room_id, schedule_id } = req.params;
   const { date, start, end } = req.body;
-
   try {
     // Checking the validity of each schedule
     const _date = new Date(date);
-    const _start = new Date(start);
-    const _end = new Date(end);
-
+    const _start = start ? new Date(`${date}T${start}`) : null;
+    const _end = end ? new Date(`${date}T${end}`) : null;
     if (isNaN(_date) || isNaN(_start) || isNaN(_end)) {
       throw { status: 400, message: `Invalid date format.` };
     }
 
     if (_end <= _start) {
-      throw { status: 400, message: `The end time must be after the starting time in schedules[${i}].` };
+      throw { status: 400, message: `The end time must be after the start time.` };
     }
     
     const room = await Room.findById(room_id);
@@ -153,6 +177,18 @@ exports.updateRoomSchedule = async (req, res) => {
     schedule.end = _end;
 
     await room.save();
+
+    
+    await User.updateOne(
+      { _id: user._id, "bookings.scheduleId": schedule_id },
+      {
+        $set: {
+          "bookings.$.date": _date,
+          "bookings.$.start": _start,
+          "bookings.$.end": _end
+        }
+      }
+    );
     return res.status(200).json({
       message: 'Schedules updated successfully.',
       schedule: {
@@ -169,7 +205,58 @@ exports.updateRoomSchedule = async (req, res) => {
   }
 };
 
-// GET: Return all rooms
+exports.findRooms = async (req, res) => {
+  const { date, start, end } = req.body;
+
+  if (!date) {
+    return res.status(400).json({ error: "Date is required" });
+  }
+
+  const dateTime = new Date(date);
+  const startTime = start ? new Date(`${date}T${start}`) : null;
+  const endTime = end ? new Date(`${date}T${end}`) : null;
+
+  if ((start && isNaN(startTime)) || (end && isNaN(endTime))) {
+    return res.status(400).json({ error: "Invalid start or end time" });
+  }
+
+  try {
+    const rooms = await Room.find();
+
+    const availableRooms = rooms.filter(room => {
+      const bookingsOnDate = room.schedules.filter(s => {
+        const formatted = toDMY(s.date);
+        const targetDate = toDMY(dateTime);
+        return formatted === targetDate;
+      });
+
+      if (!startTime || !endTime) {
+        return bookingsOnDate.length === 0;
+      }
+
+      const hasConflict = bookingsOnDate.some(s => {
+        const sStart = new Date(s.start);
+        const sEnd = new Date(s.end);
+        const overlap = startTime < sEnd && endTime > sStart;
+        if (overlap) {
+          console.log(`[CONFLICT] Room "${room.name}" time overlaps:`, {
+            request: [startTime, endTime],
+            existing: [sStart, sEnd]
+          });
+        }
+        return overlap;
+      });
+
+      return !hasConflict;
+    });
+
+    res.json(availableRooms);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch available rooms" });
+  }
+};
+
 exports.getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find();

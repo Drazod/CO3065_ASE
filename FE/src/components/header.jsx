@@ -48,10 +48,12 @@ export default function Header() {
         {/* <a href={memberData ? "/profile" : "/login"} className="flex items-center space-x-2"> */}
         {user ? (
           <>
-            <div className="flex items-center space-x-2">
-              <FaUserCircle className="text-xl hover:text-gray-600" />
-              <span className="text-base font-medium">{user.username}</span>
-            </div>
+            <a href="/profile" className="flex items-center space-x-2 hover:text-gray-600">
+              <div className="flex items-center space-x-2">
+                <FaUserCircle className="text-xl hover:text-gray-600" />
+                <span className="text-base font-medium">{user.username}</span>
+              </div>
+            </a>
             <button
               onClick={logout}
               className="text-sm bg-[#E8F1F2] text-[#1D1A05] px-3 py-1 rounded hover:bg-[#D6E5E3] transition"
