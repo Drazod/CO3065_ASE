@@ -10,18 +10,18 @@ const Sidebar = () => {
             </button>
         </a>
 
-        <h1 className="text-xs mt-2 font-dancing font-semibold">Yumeow-Cookie</h1>
+        <h1 className="text-xs mt-2 font-dancing font-semibold">HCMUT-ROMS</h1>
         <nav className="w-full flex flex-col items-center border-white border-t-2 space-y-14 mt-4 py-10">
             <a href="/profile">
                 <button className="hover:text-[#4A6FA5] flex">
                     <CiUser size={40} />
                 </button>
             </a>
-            <a href="/setting">
+            {/* <a href="/setting">
                 <button className="hover:text-[#4A6FA5] flex">
                     <CiSettings size={43} />
                 </button>
-            </a>
+            </a> */}
 
           {/* <button className="hover:text-pink-800 flex">
             <CiReceipt size={43} />

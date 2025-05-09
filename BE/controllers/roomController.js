@@ -284,7 +284,7 @@ exports.getRoomById = async (req, res) => {
 // PUT: Edit a room by ID
 exports.editRoom = async (req, res) => {
   try {
-    const { name, building, location, description, capacity, schedules } = req.body;
+    const { name, building, location, description, capacity} = req.body;
     
     // Check if another room with same name and building exists (excluding current room)
     const existingRoom = await Room.findOne({
@@ -302,7 +302,7 @@ exports.editRoom = async (req, res) => {
     // Find room and update
     const updatedRoom = await Room.findByIdAndUpdate(
       req.params.room_id,
-      { name, building, location, description, capacity, schedules },
+      { name, building, location, description, capacity},
       { new: true, runValidators: true }
     );
     
