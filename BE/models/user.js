@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     },
     required: [true, 'Role is required.'],
   },
+  approved: {
+    type: Boolean,
+    default: false
+  },
   bookings: [
     {
       room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room' },

@@ -25,6 +25,8 @@ const Booking= () => {
   const [selectedBase, setSelectedBase] = useState("All");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [minCapacity, setMinCapacity] = useState(1);
+
 
   const handleOpenPopup = (roomId) => {
     const found = room?.find(r => r._id === roomId);
@@ -53,6 +55,7 @@ const Booking= () => {
   useEffect(() => {
     getRoom();
   }, []);
+
   const handleFindRooms = async () => {
     if (!startTime || !endTime) {
       alert("Please select both start and end time.");
@@ -73,7 +76,8 @@ const Booking= () => {
       const res = await axiosInstance.post('/rooms/find', {
         date: dateStr,
         start: startStr,
-        end: endStr
+        end: endStr,
+        minCapacity
       });
       
   
@@ -246,11 +250,16 @@ const Booking= () => {
               <div className="flex items-center gap-2 bg-[#E8F1F2] px-4 py-2 rounded shadow-sm">
                 <FaUser />
                 <span>Students</span>
-                <select className="px-2 py-1 rounded border border-gray-300">
-                  {[1, 2, 3, 4, 5].map(n => <option key={n}>{n}</option>)}
+                <select
+                  className="px-2 py-1 rounded border border-gray-300"
+                  value={minCapacity}
+                  onChange={(e) => setMinCapacity(Number(e.target.value))}
+                >
+                  {[1, 2, 3, 4, 5, 10, 15, 20, 30, 100].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>
+
             <button onClick={handleFindRooms} className="bg-[#D6E5E3] font-bold text-[#1D1A05] px-6 py-3 rounded hover: mt-4 md:mt-6">
               FIND
             </button>

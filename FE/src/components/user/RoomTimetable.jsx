@@ -17,10 +17,10 @@ const AllRoomTimetable = () => {
   }, []);
 
   return (
-    <section className="mt-10 mx-4 bg-[#4A6FA5] p-6 rounded-2xl shadow-md">
-      <h2 className="text-lg font-semibold mb-4 text-white">All Room Schedules</h2>
+    <section className="col-span-2 mx-4 bg-[#4A6FA5] text-[#1D1A05]  p-6 rounded-2xl shadow-md">
+      <h2 className="text-lg font-semibold mb-4 ">All Room Schedules</h2>
       
-      <div className="grid grid-cols-7 border-b ml-10 border-gray-200 text-white">
+      <div className="grid grid-cols-7 ml-10">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
           <div key={day} className="font-bold text-center">{day}</div>
         ))}
@@ -32,7 +32,7 @@ const AllRoomTimetable = () => {
           {Array.from({ length: 11 }).map((_, i) => {
             const hour = 8 + i;
             return (
-              <div key={hour} className="h-[45px] text-xs text-right pr-1 text-gray-600">
+              <div key={hour} className="h-[45px] text-xs text-right pr-1">
                 {hour}:00
               </div>
             );

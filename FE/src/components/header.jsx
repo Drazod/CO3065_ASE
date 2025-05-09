@@ -31,7 +31,7 @@ export default function Header() {
         <div className="flex justify-center">
           <a href="/">
             <h1 className="text-[33px] font-dancing font-semibold mr-6">
-              HRB
+              SCAMS
             </h1>
           </a>
         </div>

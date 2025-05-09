@@ -18,10 +18,10 @@ const WeeklyCalendar = () => {
   }, []);
 
   return (
-    <section className="col-span-2 bg-[#4A6FA5] rounded-2xl p-6 shadow-md">
-    <h2 className="text-lg font-semibold mb-4">Weekly Timetable</h2>
+  <section className="col-span-2 bg-[#4A6FA5] text-[#1D1A05] rounded-2xl p-6 shadow-md">
+    <h2 className="text-lg font-semibold mb-4 ">Weekly Timetable</h2>
     
-    <div className="grid grid-cols-7 border-b ml-10 border-gray-200">
+    <div className="grid grid-cols-7 ml-10 ">
     {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
         <div key={day} className="font-bold text-center">{day}</div>
       ))}
@@ -30,11 +30,11 @@ const WeeklyCalendar = () => {
     <div className="relative border rounded overflow-hidden " style={{ height: "470px" }}>
       
       {/* Time Labels (left column) */}
-      <div className="absolute left-0 top-0 w-14 h-full border-r border-gray-200">
+      <div className="absolute left-0 bg-[#E8F1F2] top-0 w-14 h-full border-r border-gray-200">
         {Array.from({ length: 11 }).map((_, i) => {
           const hour = 8 + i;
           return (
-            <div key={hour} className="h-[45px] text-xs text-right pr-1 text-gray-600">
+            <div key={hour} className="h-[45px] text-xs text-right pr-1 font-semibold">
               {hour}:00
             </div>
           );
@@ -42,7 +42,7 @@ const WeeklyCalendar = () => {
       </div>
 
       {/* Day Columns */}
-      <div className="ml-14 flex h-full">
+      <div className="ml-14 bg-[#E8F1F2] flex h-full">
         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, dayIdx) => (
           <div key={day} className="flex-1 relative border-l border-gray-200">
             {/* Bookings for this day */}

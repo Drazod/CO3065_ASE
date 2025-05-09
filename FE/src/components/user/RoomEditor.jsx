@@ -67,11 +67,11 @@ const RoomListEditor = () => {
   };
 
   return (
-    <div className="col-span-2 bg-[#4A6FA5] rounded-2xl p-6 shadow-md mx-auto ">
+    <div className="col-span-2 bg-[#4A6FA5] text-[#1D1A05]  rounded-2xl p-6 shadow-md mx-auto ">
       <h2 className="text-xl font-bold mb-4">Room Management</h2>
 
       {/* Add New Room Form */}
-      <div className="mb-6 border p-4 rounded bg-[#D6E5E3]">
+      <div className="mb-6 border p-4 rounded-lg bg-[#E8F1F2]">
         <h3 className="text-md font-semibold mb-2">Add New Room</h3>
         <div className="grid grid-cols-5 gap-2">
           <input name="name" value={newRoom.name} onChange={handleNewChange} placeholder="Name" className="border px-2 py-1" />
@@ -84,7 +84,7 @@ const RoomListEditor = () => {
       </div>
 
       {/* Room List Editor */}
-      <table className="w-full text-sm text-left">
+      <table className="w-full rounded-lg text-sm text-left">
         <thead>
           <tr className="bg-[#D6E5E3]">
             <th className="px-4 py-2">Name</th>
@@ -97,7 +97,7 @@ const RoomListEditor = () => {
         </thead>
         <tbody>
           {rooms.map(room => (
-            <tr key={room._id} className="border-b bg-[#D6E5E3]">
+            <tr key={room._id} className="border-b bg-[#E8F1F2]">
               {editingRoomId === room._id ? (
                 <>
                   <td className="px-4 py-2"><input name="name" value={formData.name} onChange={handleChange} className="w-full" /></td>

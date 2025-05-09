@@ -14,25 +14,33 @@ exports.signUpUser = async (req, res) => {
       return res.status(400).json({ message: 'Username already taken.' });
     }
 
+    const allowedRoles = ['student'];
+    const isApproved = allowedRoles.includes(role);
+
     const newUser = new User({
       name: name || username,
       username,
       password,
       role,
+      isApproved, 
     });
 
     await newUser.save();
     const userResponse = newUser.toObject();
     delete userResponse.password;
 
-    res.status(201).json({ message: 'User created successfully', user: userResponse });
+    const msg = isApproved
+      ? 'User created successfully'
+      : 'Account submitted for approval by staff.';
+
+    res.status(201).json({ message: msg, user: userResponse });
   } catch (error) {
     if (error.name == 'ValidationError') {
       return res.status(400).json({ message: 'Validation failed', errors: error.errors });
     }
     res.status(500).json({ message: 'Server error during sign up.' });
   }
-}
+};
 
 exports.signInUser = async (req, res) => {
   const { username, password } = req.body;
@@ -45,6 +53,10 @@ exports.signInUser = async (req, res) => {
     const user = await User.findOne({ username: username.toLowerCase() });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid credentials.' });
+    }
+
+    if (['lecturer', 'staff'].includes(user.role) && !user.approved) {
+      return res.status(403).json({ message: 'Your account is pending approval by an administrator.' });
     }
 
     const payload = {
@@ -75,7 +87,8 @@ exports.signInUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error during sign in.' });
   }
-}
+};
+
 
 exports.verifyToken = async (req, res) => {
   try {

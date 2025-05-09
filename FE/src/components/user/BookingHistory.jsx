@@ -2,7 +2,7 @@ import React from "react";
 
 const BookingHistory = ({ bookings = [], onEdit }) => {
   return (
-    <section className="mt-10 mx-4 bg-[#4A6FA5] p-6 rounded-2xl shadow">
+    <section className="col-span-3 mt-10 mx-4 bg-[#4A6FA5] p-6 rounded-2xl shadow">
       <h2 className="text-lg font-semibold mb-4 text-white">Booking History</h2>
       <div className="space-y-4">
         {bookings.map((booking) => (

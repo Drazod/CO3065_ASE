@@ -206,7 +206,7 @@ exports.updateRoomSchedule = async (req, res) => {
 };
 
 exports.findRooms = async (req, res) => {
-  const { date, start, end } = req.body;
+  const { date, start, end, minCapacity } = req.body;
 
   if (!date) {
     return res.status(400).json({ error: "Date is required" });
@@ -224,6 +224,8 @@ exports.findRooms = async (req, res) => {
     const rooms = await Room.find();
 
     const availableRooms = rooms.filter(room => {
+      if (minCapacity && room.capacity < minCapacity) return false;
+
       const bookingsOnDate = room.schedules.filter(s => {
         const formatted = toDMY(s.date);
         const targetDate = toDMY(dateTime);
@@ -237,14 +239,7 @@ exports.findRooms = async (req, res) => {
       const hasConflict = bookingsOnDate.some(s => {
         const sStart = new Date(s.start);
         const sEnd = new Date(s.end);
-        const overlap = startTime < sEnd && endTime > sStart;
-        if (overlap) {
-          console.log(`[CONFLICT] Room "${room.name}" time overlaps:`, {
-            request: [startTime, endTime],
-            existing: [sStart, sEnd]
-          });
-        }
-        return overlap;
+        return startTime < sEnd && endTime > sStart;
       });
 
       return !hasConflict;
@@ -256,6 +251,7 @@ exports.findRooms = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch available rooms" });
   }
 };
+
 
 exports.getAllRooms = async (req, res) => {
   try {

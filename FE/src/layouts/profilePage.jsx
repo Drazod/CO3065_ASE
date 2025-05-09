@@ -6,9 +6,11 @@ import { useAuth } from "../context/AuthContext";
 import EditBookingPopup from "../components/user/editbookingPopUp";
 import WeeklyCalendar from "../components/user/WeeklyCalendar";
 import BookingHistory from "../components/user/BookingHistory";
+import UserApproval from "../components/user/UserApproval";
 import RoomListEditor from "../components/user/RoomEditor";
 import RoomTimetable from "../components/user/RoomTimetable";
 import axiosInstance from '../configs/axiosInstance';
+import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -27,6 +29,12 @@ export default function ProfilePage() {
     setSelectedBooking(null);
   };
 
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,11 +50,11 @@ export default function ProfilePage() {
   <div className="flex flex-col md:flex-row min-h-screen bg-[#D6E5E3] text-[#1D1A05] font-sans">
     {/* Sidebar */}
     <Sidebar />
-    <div className="flex-1">
+    <div className="flex-1 mb-10">
       {/* Main Content */}
       <div className="flex-1 my-10 mx-4 grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Profile Card */}
-        <section className="col-span-1 bg-[#4A6FA5] rounded-3xl shadow flex flex-col justify-between h-full">
+        <section className="col-span-1 bg-[#4A6FA5] rounded-2xl shadow flex flex-col justify-between h-full">
           <div className="p-6">
             <div className="flex items-center">
               <img
@@ -73,8 +81,8 @@ export default function ProfilePage() {
 
           {/* Log out button at the bottom */}
           <button
-            onClick={logout}
-            className="bg-[#E8F1F2] text-[#1D1A05] py-2 px-4 rounded-b-3xl hover:bg-[#E09891] w-full h-14 flex items-center justify-center"
+            onClick={handleLogout}
+            className="bg-[#E8F1F2] text-[#1D1A05] py-2 px-4 rounded-b-2xl hover:bg-[#E09891] w-full h-14 flex items-center justify-center"
           >
             <FaSignOutAlt className="mr-2" /> Log out
           </button>
@@ -87,15 +95,21 @@ export default function ProfilePage() {
           <RoomListEditor />
         ) : null}
       </div>
-
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-10">
       {profile?.user.role === "lecturer" ? (
         <BookingHistory
           bookings={profile?.user.bookings || []}
           onEdit={handleEditBooking}
         />
       ) : profile?.user.role === "staff" ? (
-        <RoomTimetable />
+        <>
+          <RoomTimetable />
+          <UserApproval />
+        </>
       ) : null}
+      </div>
+
+
       <EditBookingPopup
         show={editPopupOpen}
         booking={selectedBooking}
