@@ -5,7 +5,61 @@ import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../configs/axiosInstance";
 import { useAuth } from "../../context/AuthContext"; // Adjust path as needed
 import { useNavigate } from "react-router-dom";
+const RoomScheduleCalendar = ({ schedules }) => {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+  return (
+    <div className="relative border rounded overflow-hidden" style={{ height: "470px" }}>
+      {/* Time Labels */}
+      <div className="absolute left-0 top-0 w-14 h-full border-r border-gray-200 bg-white z-10">
+        {Array.from({ length: 11 }).map((_, i) => {
+          const hour = 8 + i;
+          return (
+            <div
+              key={hour}
+              className="h-[45px] text-xs text-right pr-1 text-gray-600"
+            >
+              {hour}:00
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Columns */}
+      <div className="ml-14 flex h-full">
+        {days.map((day, dayIdx) => (
+          <div
+            key={dayIdx}
+            className="flex-1 relative border-l border-gray-200"
+          >
+            {schedules
+              .filter((s) => {
+                const d = new Date(s.start);
+                const localDay = (d.getDay() + 6) % 7; // Convert Sunday to 6
+                return localDay === dayIdx;
+              })
+              .map((s, i) => {
+                const start = new Date(s.start);
+                const end = new Date(s.end);
+                const top = ((start.getHours() + start.getMinutes() / 60) - 8) * 45;
+                const height = ((end - start) / 60000) * 0.75;
+
+                return (
+                  <div
+                    key={i}
+                    className="absolute left-1 right-1 bg-[#E09891] text-white text-xs rounded px-1 py-0.5 shadow"
+                    style={{ top: `${top}px`, height: `${height}px` }}
+                  >
+                    {start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - {end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                );
+              })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const RoomPopup = ({ show, onClose, roomImage, roomData }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -37,7 +91,7 @@ const RoomPopup = ({ show, onClose, roomImage, roomData }) => {
       console.log(response.data);
     } catch (err) {
       console.error("Booking failed:", err.response?.data || err.message);
-      alert(err.response?.data?.error || "Booking failed");
+      alert(err.response?.data?.message || "Booking failed. Please try again.");
     }
   };
   
@@ -45,80 +99,26 @@ const RoomPopup = ({ show, onClose, roomImage, roomData }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-[#E8F1F2] rounded-lg shadow-lg w-[90%] text-[#1D1A05] md:w-[600px] flex flex-col md:flex-row overflow-hidden">
-        <img
-          src={roomImage}
-          alt="Service"
-          className="w-full md:w-1/2 h-auto object-cover"
-        />
-        <div className="p-6 md:w-1/2 ">
-          {/* Filter Header */}
-          <h3 className="text-xl font-bold  mb-2">New Booking</h3>
-          {/* Date Picker */}
-          <div className="bg-[#D6E5E3] rounded p-2 flex items-center justify-between mb-3">
-       
-
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
-              placeholderText="Check Available"
-              dateFormat="dd/MM/yyyy"
-              className="outline-none bg-transparent"
-              minDate={new Date()}
-            />
-            <FaCalendarAlt className="mr-2 text-[#1D1A05]" />
+      <div className="bg-white w-[95%] max-w-6xl rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        {/* Left Column: Image and Info */}
+        <div className="w-full md:w-1/3 flex flex-col border-r border-gray-300">
+          <div className="h-64 bg-gray-200">
+            <img src={roomImage} alt="Room" className="w-full h-full object-cover" />
           </div>
-          {/* Time Selectors */}
-          <div className="flex  gap-4 mb-4 justify-between">
-            <div className="bg-[#D6E5E3] w-1/2 pl-2 rounded text-lg outline-none">
-              <label className="text-sm mb-1">Start Time</label>
-              <DatePicker
-                selected={startTime}
-                onChange={(date) => setStartTime(date)}
-                showTimeSelectOnly
-                showTimeInput
-                inline
-                dateFormat="h:mm aa"
-                className="!bg-transparent outline-none"
-              />
-            </div>
-
-            <div className="bg-[#D6E5E3] w-1/2 pl-2  rounded text-lg outline-none">
-              <label className="text-sm mb-1">End Time</label>
-              <DatePicker
-                selected={endTime}
-                onChange={(date) => setEndTime(date)}
-                showTimeSelectOnly
-                showTimeInput
-                inline
-                dateFormat="h:mm aa"
-                className="outline-none"
-              />
-            </div>
-          </div>
-          {/* Room Info */}
-          <h3 className="text-lg font-semibold mb-2 ">{roomData.name}</h3>
-          <p className="text-sm mb-4">
-            {roomData.description}
-          </p>
-
-          {/* Buttons */}
-          <div className="flex justify-between">
-            <button
-              onClick={onClose}
-              className="bg-[#4A6FA5] hover:bg-blue-700 text-white px-4 py-2 rounded"
-            >
-              Close
-            </button>
-            <button
-              className="bg-[#E09891] hover:bg-red-500 text-white px-4 py-2 rounded"
-              onClick={() => bookRoom(roomData._id, selectedDate, startTime, endTime)}
-            >
-              Book Now
-            </button>
+          <div className="p-4 space-y-2 bg-[#E8F1F2] flex-1">
+            <h2 className="text-xl font-bold">{roomData?.name}</h2>
+            <p className="text-sm text-gray-600">{roomData?.description}</p>
+            <p className="text-sm">📍 {roomData?.location}</p>
+            <p className="text-sm">🏢 {roomData?.building}</p>
+            <p className="text-sm">🪑 Capacity: {roomData?.capacity}</p>
           </div>
         </div>
+        <div className="w-full md:w-2/3 bg-white p-4 overflow-x-auto">
+          <h3 className="text-lg font-semibold mb-2">Weekly Schedule</h3>
+          <RoomScheduleCalendar schedules={roomData?.schedules || []} />
+        </div>
       </div>
+
     </div>
   );
 };

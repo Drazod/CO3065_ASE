@@ -71,6 +71,9 @@ export default function LogInPage() {
             </Form>
           )}
         </Formik>
+          <p className="text-lg text-gray-500 mb-6">
+            Don't have an account? <a href="/register" className="text-[#E09891]">Click here</a>
+          </p>
       </div>
     </div>
   )

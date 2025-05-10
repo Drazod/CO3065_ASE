@@ -43,7 +43,7 @@ const Register = () => {
           <h2 className="text-4xl font-bold text-[#4A6FA5] mb-1">
             | <span className="text-[#1D1A05]">Hello new friend</span>
           </h2>
-          <p className="text-LG text-gray-500 mb-6">
+          <p className="text-lg text-gray-500 mb-6">
             Already have an account? <a href="/login" className="text-[#E09891]">Click here</a>
           </p>
 

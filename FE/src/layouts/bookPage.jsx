@@ -12,12 +12,15 @@ import down from "../assets/store/down.png";
 import alt from "../assets/store/alt.png";
 import DatePicker from "react-datepicker";
 import RoomPopup from "../components/bookPage/roomdetailPopUp";
+import { useAuth } from "../context/AuthContext";
 import roomImg from "../assets/room1.jpg";
 import axiosInstance from '../configs/axiosInstance';
+import RoomBookingPopup from "../components/bookPage/roomBookingPopUp";
 
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 const Booking= () => {
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -100,12 +103,21 @@ const Booking= () => {
     
     <div className="relative-container noise-overlay min-h-screen flex flex-col">
       <Header />
-      <RoomPopup
-        show={showPopup}
-        roomImage={roomImg}
-        roomData={selectedRoom}
-        onClose={handleClosePopup}
-      />
+      {user?.role === "student" ? (
+        <RoomPopup
+          show={showPopup}
+          roomImage={roomImg}
+          roomData={selectedRoom}
+          onClose={handleClosePopup}
+        />
+      ) : (
+        <RoomBookingPopup
+          show={showPopup}
+          roomImage={roomImg}
+          roomData={selectedRoom}
+          onClose={handleClosePopup}
+        />
+      )}
       <section className="relative pt-52 h-full flex flex-col items-center justify-center">
         {/* Hero Title */}
         <div className="text-center mb-10">
