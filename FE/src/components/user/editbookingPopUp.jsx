@@ -7,7 +7,7 @@ const EditBookingPopup = ({ show, booking, onClose, onUpdated }) => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
-  
+  console.log("Booking:", booking);
   useEffect(() => {
     if (booking) {
       setSelectedDate(new Date(booking.date));

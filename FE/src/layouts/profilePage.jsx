@@ -8,7 +8,7 @@ import WeeklyCalendar from "../components/user/WeeklyCalendar";
 import BookingHistory from "../components/user/BookingHistory";
 import UserApproval from "../components/user/UserApproval";
 import RoomListEditor from "../components/user/RoomEditor";
-import RoomTimetable from "../components/user/RoomTimetable";
+import AllRoomTimetable from "../components/user/AllRoomTimetable";
 import axiosInstance from '../configs/axiosInstance';
 import { useNavigate } from "react-router-dom";
 
@@ -18,11 +18,15 @@ export default function ProfilePage() {
   const [editPopupOpen, setEditPopupOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const handleEditBooking = (booking) => {
-    setSelectedBooking(booking);
-    console.log(booking);
-    setEditPopupOpen(true);
-  };
+const handleEditBooking = (roomIdOrBooking, maybeScheduleId) => {
+  if (typeof roomIdOrBooking === "object") {
+    setSelectedBooking(roomIdOrBooking);
+  } else {
+    setSelectedBooking({ roomId: roomIdOrBooking, scheduleId: maybeScheduleId });
+  }
+  setEditPopupOpen(true);
+};
+
 
   const closeEditPopup = () => {
     setEditPopupOpen(false);
@@ -92,7 +96,7 @@ export default function ProfilePage() {
         {profile?.user.role === "lecturer" ? (
           <WeeklyCalendar />
         ) : profile?.user.role === "staff" ? (
-          <RoomListEditor />
+          <RoomListEditor  />
         ) : null}
       </div>
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -103,7 +107,7 @@ export default function ProfilePage() {
         />
       ) : profile?.user.role === "staff" ? (
         <>
-          <RoomTimetable />
+          <AllRoomTimetable onEdit={handleEditBooking}/>
           <UserApproval />
         </>
       ) : null}

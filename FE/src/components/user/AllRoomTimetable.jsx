@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../configs/axiosInstance";
 
-const AllRoomTimetable = () => {
+const AllRoomTimetable = ({ onEdit }) => {
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
@@ -57,15 +57,22 @@ const AllRoomTimetable = () => {
                     const height = ((end - start) / 1000 / 60) * 0.75;
 
                     return (
-                      <div
-                        key={i}
+                      <button
+                        key={sch._id}
                         className="absolute left-1 right-1 bg-[#E09891] text-white text-xs rounded px-1 py-0.5 shadow"
                         style={{ top: `${top}px`, height: `${height}px` }}
+                        onClick={() => onEdit({ ...sch, 
+                          scheduleId: sch._id, 
+                          room: 
+                          {
+                            _id: room._id,
+                          }
+                        })}
                       >
                         {room.name}<br />
                         {start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
                         {end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </div>
+                      </button>
                     );
                   })
               )}
