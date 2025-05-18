@@ -111,12 +111,19 @@ const RoomPopup = ({ show, onClose, roomImage, roomData }) => {
             <p className="text-sm">📍 {roomData?.location}</p>
             <p className="text-sm">🏢 {roomData?.building}</p>
             <p className="text-sm">🪑 Capacity: {roomData?.capacity}</p>
+                    <button
+          onClick={onClose}
+          className="bg-[#4A6FA5] hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+            Close
+        </button>
           </div>
         </div>
         <div className="w-full md:w-2/3 bg-white p-4 overflow-x-auto">
           <h3 className="text-lg font-semibold mb-2">Weekly Schedule</h3>
           <RoomScheduleCalendar schedules={roomData?.schedules || []} />
         </div>
+
       </div>
 
     </div>

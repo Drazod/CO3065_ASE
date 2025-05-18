@@ -1,14 +1,23 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger');
+const { sanitizeInput } = require('../utils/sanitizeUtils');
+
 
 exports.signUpUser = async (req, res) => {
-  const { name, username, password, role } = req.body;
+  let { name, username, password, role } = req.body;
 
   if (!username || !password || !role) {
     return res.status(400).json({ message: 'Username, password, and role are required.' });
   }
 
   try {
+    
+    username = sanitizeInput(username);
+    password = sanitizeInput(password);
+    name = name ? sanitizeInput(name) : username;
+    role = sanitizeInput(role);
+
     const existingUser = await User.findOne({ username: username.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ message: 'Username already taken.' });
@@ -18,11 +27,11 @@ exports.signUpUser = async (req, res) => {
     const isApproved = allowedRoles.includes(role);
 
     const newUser = new User({
-      name: name || username,
+      name: name,
       username,
       password,
       role,
-      isApproved, 
+      isApproved,
     });
 
     await newUser.save();
@@ -43,13 +52,16 @@ exports.signUpUser = async (req, res) => {
 };
 
 exports.signInUser = async (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required.' });
   }
 
   try {
+    username = sanitizeInput(username);
+    password = sanitizeInput(password);
+
     const user = await User.findOne({ username: username.toLowerCase() });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid credentials.' });
@@ -78,6 +90,7 @@ exports.signInUser = async (req, res) => {
 
     const userResponse = user.toObject();
     delete userResponse.password;
+    logger.info(`User ${user.username} signed in successfully from IP ${req.ip}`);
 
     res.status(200).json({
       message: 'Sign in successful',

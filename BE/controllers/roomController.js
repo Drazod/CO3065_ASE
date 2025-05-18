@@ -1,5 +1,9 @@
 const Room = require("../models/room");
+const {safeGetRoom} = require('../utils/roomCache');
 const User = require('../models/user'); 
+const mongoose = require("mongoose");
+const {sanitizeInput} = require('../utils/sanitizeUtils');
+const logger = require('../utils/logger');
 
 
 const toDMY = (date) => date.toISOString().split("T")[0].split("-").reverse().join("-");
@@ -11,19 +15,20 @@ exports.getRoomSchedule = async (req, res) => {
   const { date } = req.body;
 
   try {
-    const room = await Room.findById(room_id);
+    const room = await safeGetRoom(room_id);
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     const schedule = room.schedules.find(
       (s) => toDMY(s.date) === date
     );
+    logger.info(`User ${req.user.username} checked schedule for room ${room_id} on ${date}`);
     if (schedule) {
       return res.status(200).json(schedule);
     }
 
     return res.status(200).json({});
   } catch (err) {
-    console.error(err);
+    logger.error(`Failed to get room schedule: ${err.message}`);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -33,9 +38,11 @@ exports.bookRoomSchedule = async (req, res) => {
   const user = req.user;
   const { room_id } = req.params;
   const { schedules } = req.body;
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const room = await Room.findById(room_id);
+    const room = await Room.findById(room_id).session(session);
     if (!room) return res.status(404).json({ error: "Room not found" });
     
     // Checking if schedules is an array and not empty
@@ -45,9 +52,18 @@ exports.bookRoomSchedule = async (req, res) => {
 
     // Checking the validity of each schedule
     const newSchedule = schedules.map((sch, i) => {
-      const _date = new Date(sch.date);
-      const _start = sch.start ? new Date(`${sch.date}T${sch.start}`) : null;
-      const _end = sch.end ? new Date(`${sch.date}T${sch.end}`) : null;
+      
+      const schDate = sanitizeInput(sch.date);
+      const schStart = sanitizeInput(sch.start);
+      const schEnd = sanitizeInput(sch.end);
+
+      const _date = new Date(schDate);
+      const _start = schStart ? new Date(`${schDate}T${schStart}`) : null;
+      const _end = schEnd ? new Date(`${schDate}T${schEnd}`) : null;
+
+      // const _date = new Date(sch.date);
+      // const _start = sch.start ? new Date(`${sch.date}T${sch.start}`) : null;
+      // const _end = sch.end ? new Date(`${sch.date}T${sch.end}`) : null;
       if (isNaN(_date) || isNaN(_start) || isNaN(_end)) {
         throw { status: 400, message: `Invalid date format in schedules[${i}].` };
       }
@@ -58,7 +74,7 @@ exports.bookRoomSchedule = async (req, res) => {
     });
 
     // Checking overlapping schedules (New vs Old)
-    for(let i = 0; i < newSchedule.length; i++) {
+    for (let i = 0; i < newSchedule.length; i++) {
       const { date: new_date, start: new_start, end: new_end } = newSchedule[i];
       const formattedNewDate = toDMY(new_date);
 
@@ -83,8 +99,6 @@ exports.bookRoomSchedule = async (req, res) => {
       }
     }
 
-    const userDoc = await User.findById(user._id);
-    if (!userDoc) return res.status(404).json({ error: "User not found" });
 
     // Push schedules into room
     newSchedule.forEach(({ date, start, end }) => {
@@ -96,15 +110,16 @@ exports.bookRoomSchedule = async (req, res) => {
       });
     });
 
-    await room.save();
+    await room.save({ session });
 
     // Grab the newly inserted schedules with _id
     const inserted = room.schedules.slice(-newSchedule.length);
 
     // Update user bookings with booking IDs
-    const userToUpdate = await User.findById(user._id);
+    const userDoc = await User.findById(user._id).session(session);
+    if (!userDoc) return res.status(404).json({ error: "User not found" });
     inserted.forEach((booking) => {
-      userToUpdate.bookings.push({
+      userDoc.bookings.push({
         room: room._id,
         date: booking.date,
         start: booking.start,
@@ -112,9 +127,13 @@ exports.bookRoomSchedule = async (req, res) => {
         scheduleId: booking._id
       });
     });
-    await userToUpdate.save();
 
-    await Promise.all([room.save(), userDoc.save()]);
+
+    await userDoc.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
+    logger.info(`User ${user.username} booked room ${room._id} with ${inserted.length} schedule(s)`);
 
     return res.status(201).json({
       message: 'Schedules booked successfully.',
@@ -125,21 +144,30 @@ exports.bookRoomSchedule = async (req, res) => {
       }))
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    await session.abortTransaction();
+    session.endSession();
+    logger.error(`Booking error: ${err.message}`);
+    res.status(500).json({ error: "Server error during booking" });
   }
 };
 
 // PUT: Edit a schedule
 exports.updateRoomSchedule = async (req, res) => {
   const user = req.user;
-  const { room_id, schedule_id } = req.params;
+  const room_id = sanitizeInput(req.params.room_id);
+  const schedule_id = sanitizeInput(req.params.schedule_id);
+
   const { date, start, end } = req.body;
   try {
     // Checking the validity of each schedule
-    const _date = new Date(date);
-    const _start = start ? new Date(`${date}T${start}`) : null;
-    const _end = end ? new Date(`${date}T${end}`) : null;
+    
+    const _date = new Date(sanitizeInput(date));
+    const _start = start ? new Date(`${date}T${sanitizeInput(start)}`) : null;
+    const _end = end ? new Date(`${date}T${sanitizeInput(end)}`) : null;
+
+    // const _date = new Date(date);
+    // const _start = start ? new Date(`${date}T${start}`) : null;
+    // const _end = end ? new Date(`${date}T${end}`) : null;
     if (isNaN(_date) || isNaN(_start) || isNaN(_end)) {
       throw { status: 400, message: `Invalid date format.` };
     }
@@ -148,7 +176,7 @@ exports.updateRoomSchedule = async (req, res) => {
       throw { status: 400, message: `The end time must be after the start time.` };
     }
     
-    const room = await Room.findById(room_id);
+    const room = await safeGetRoom(room_id);
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     const schedule = room.schedules.id(schedule_id);
@@ -316,9 +344,12 @@ exports.editRoom = async (req, res) => {
 // POST: Add a new room
 exports.addRoom = async (req, res) => {
   try {
-    const { name, building, location, description, capacity } = req.body;
-    
-    // Validate required fields
+    const name = sanitizeInput(req.body.name);
+    const building = sanitizeInput(req.body.building);
+    const location = sanitizeInput(req.body.location || "CS1");
+    const description = sanitizeInput(req.body.description || "No description available");
+    const capacity = req.body.capacity || 30;
+
     if (!name || !building) {
       return res.status(400).json({ error: "Name and building are required fields" });
     }

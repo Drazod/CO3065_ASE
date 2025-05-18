@@ -377,7 +377,7 @@ const Booking= () => {
           <h2 className="text-3xl  mb-4">Quick Link</h2>
           <div className="flex flex-wrap gap-4 mb-6">
             <button className="px-6 py-2 flex items-center text-[#434237] rounded-full border border-[#434237] hover:bg-gray-300 transition">
-            <span>Order Status</span>
+            <span>Booking Status</span>
             <img
               src={alt}
               alt="icon"
@@ -385,7 +385,7 @@ const Booking= () => {
             />
             </button>
             <button className="px-6 py-2 flex items-center text-[#434237] rounded-full border border-[#434237] hover:bg-gray-300 transition">
-              Shopping Help
+              Booking Help
               <img
               src={alt}
               alt="icon"
@@ -401,7 +401,7 @@ const Booking= () => {
             />
             </button>
             <button className="px-6 py-2 flex items-center text-[#434237] rounded-full border border-[#434237] hover:bg-gray-300 transition">
-              Your Saves
+              Your Profile
               <img
               src={alt}
               alt="icon"
